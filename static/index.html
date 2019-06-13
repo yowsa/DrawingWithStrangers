@@ -7,6 +7,31 @@
 	<canvas id="mycanvas" width="400" height="400" style="border: 1px solid #000fff;"></canvas>
 	<button onClick="linje_function()"> Linje</button>
 
+	<script>
+		
+		var pos = {x: 0, y:0};
+
+		document.addEventListener("mousedown", setPosition);
+
+		function setPosition(e) {
+			pos.x = e.clientX;
+			pos.y = e.clientY;
+			drawSomethingOnClick();
+		}
+
+		function drawSomethingOnClick() {
+			var canvas = document.getElementById("mycanvas");
+			var myline = canvas.getContext("2d");
+			myline.lineWidth = 5;
+			myline.moveTo(pos.x, pos.y);
+			myline.lineTo((pos.x), (pos.y));
+			myline.stroke();
+		}
+
+
+
+	</script>
+
 
 
 	<script>
