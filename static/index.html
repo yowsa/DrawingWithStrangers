@@ -23,8 +23,9 @@
 			var canvas = document.getElementById("mycanvas");
 			var myline = canvas.getContext("2d");
 			myline.lineWidth = 5;
+			myline.beginPath();
 			myline.moveTo(pos.x, pos.y);
-			myline.lineTo((pos.x), (pos.y));
+			myline.lineTo((pos.x+1), (pos.y+1));
 			myline.stroke();
 		}
 
