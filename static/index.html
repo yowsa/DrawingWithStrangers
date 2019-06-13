@@ -6,16 +6,27 @@
 	<div>hej</div>
 	<canvas id="mycanvas" width="400" height="400" style="border: 1px solid #000fff;"></canvas>
 	<button onClick="linje_function()"> Linje</button>
+	<p id="screen-log"> </p>
 
 	<script>
-		
+		let screenLog = document.querySelector('#screen-log');
+		document.addEventListener('mousemove', logKey);
+		function logKey(e){
+			screenLog.innerText = `
+			Client X/Y: ${e.clientX}, ${e.clientY}`; 
+		}
+
 		var pos = {x: 0, y:0};
 
 		document.addEventListener("mousedown", setPosition);
 
 		function setPosition(e) {
+
+
 			pos.x = e.clientX;
 			pos.y = e.clientY;
+			
+			
 			drawSomethingOnClick();
 		}
 
