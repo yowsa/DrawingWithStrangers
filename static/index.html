@@ -1,64 +1,107 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<!--<script type="text/javascript" src="index.js"></script>-->
+<script type="text/javascript" src="index.js"></script>
 
 
 <body>
-    <canvas id="mycanvas" width="400" height="400" style="border: 1px solid #000fff;"></canvas>
+    <canvas id="mycanvas" width="400" height="400" style="border: 1px solid #000fff;"></canvas><p></p>
     <button onclick="lineColor('black')">Black Line</button>
     <button onclick="lineColor('red')">Red Line</button>
-    <button onclick="lineColor('green')">Green Line</button>
+    <button onclick="lineColor('green')">Green Line</button><p></p>
+    <button onclick="increaseStroke()">Increase stroke width</button>
+    <p id="strokeSize"></p>
+    <button onclick="decreaseStroke()">Decrease stroke width</button>
+    <p id="screen-log"></p>
 
     <script>
 
 
+      let screenLog = document.querySelector('#screen-log');
+      document.addEventListener('mousemove', logKey);
+      function logKey(e){
+        screenLog.innerText = `
+        Client X/Y: ${e.clientX}, ${e.clientY}`; 
+    }
 
-        var pos = {x: 0, y:0};
 
-        function setCursorPosition(e) {
-            pos.x = e.clientX;
-            pos.y = e.clientY;
+    var pos = {x: 0, y:0};
+
+    function setCursorPosition(e) {
+        pos.x = e.clientX;
+        pos.y = e.clientY;
+    }
+
+    
+    
+
+    var canvas = document.getElementById("mycanvas");
+    var line = canvas.getContext("2d");
+    line.lineWidth = 5;
+    line.strokeStyle = "#ff0000"
+
+   showStrokeSize();
+
+    function showStrokeSize() {
+        document.getElementById("strokeSize").innerText = line.lineWidth
+
+    }
+
+
+
+    var strokeWidth = document.getElementById("strokeSize")
+       // var width = strokeSize.getContext(line.lineWidth)
+
+       function lineColor(color) {
+        line.strokeStyle = color
+    }
+
+    function increaseStroke() {
+        if (line.lineWidth < 20){
+            line.lineWidth += 1
+        } 
+        showStrokeSize();
+    }
+
+    function decreaseStroke() {
+        if (line.lineWidth > 1){
+            line.lineWidth -= 1
         }
+        showStrokeSize();
 
 
-        var canvas = document.getElementById("mycanvas");
-        var line = canvas.getContext("2d");
-        line.lineWidth = 5;
-        line.strokeStyle = "#ff0000"
+    }
 
 
 
-        function lineColor(color) {
-            line.strokeStyle = color
-        }
 
 
-        function setBeginLinePosition() {
-            line.beginPath();
-            line.moveTo(pos.x, pos.y);
 
-        }
+    function setBeginLinePosition() {
+        line.beginPath();
+        line.moveTo(pos.x, pos.y);
 
-        function startDrawing(){
-            myvar = setInterval(drawLine, 10);
-        }
+    }
 
-
-        function drawLine(){
-            line.lineTo(pos.x, pos.y);
-            line.stroke();
-        }
+    function startDrawing(){
+        myvar = setInterval(drawLine, 10);
+    }
 
 
-        function finishDrawing(){
-            clearInterval(myvar);
-        }
+    function drawLine(){
+        line.lineTo(pos.x, pos.y);
+        line.stroke();
+    }
 
 
-        document.addEventListener("mousemove", setCursorPosition);
-        document.addEventListener("mousedown", setBeginLinePosition);
-        document.addEventListener("mousedown", startDrawing);
-        document.addEventListener("mouseup", finishDrawing);
+    function finishDrawing(){
+        clearInterval(myvar);
+    }
 
-    </script>
+
+    document.addEventListener("mousemove", setCursorPosition);
+    document.addEventListener("mousedown", setBeginLinePosition);
+    document.addEventListener("mousedown", startDrawing);
+    document.addEventListener("mouseup", finishDrawing);
+
+</script>
 
 </body>
