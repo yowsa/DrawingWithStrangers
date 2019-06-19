@@ -4,105 +4,61 @@
 
 <body>
     <canvas id="mycanvas" width="400" height="400" style="border: 1px solid #000fff;"></canvas>
-    <button onClick="linje_function()"> Linje</button>
-    <p id="screen-log"> </p>
+    <button onclick="lineColor('black')">Black Line</button>
+    <button onclick="lineColor('red')">Red Line</button>
+    <button onclick="lineColor('green')">Green Line</button>
 
     <script>
-        let screenLog = document.querySelector('#screen-log');
-        document.addEventListener('mousemove', logKey);
-        function logKey(e){
-            screenLog.innerText = `
-            Client X/Y: ${e.clientX}, ${e.clientY}`; 
-        }
+
+
 
         var pos = {x: 0, y:0};
 
-
-        document.addEventListener("mousedown", drawWhenMouseDown);
-
-        function setPosition(e) {
+        function setCursorPosition(e) {
             pos.x = e.clientX;
             pos.y = e.clientY;
         }
 
-        //$("#canvas").mousedown(function(){alert("klickade");});
+
+        var canvas = document.getElementById("mycanvas");
+        var line = canvas.getContext("2d");
+        line.lineWidth = 5;
+        line.strokeStyle = "#ff0000"
 
 
-        function drawWhenMouseDown(e) {
-            setPosition(e);
-            document.addEventListener('mousemove', drawsLineWhenMouseMoves);
-            document.addEventListener('mouseup', stopDrawing);
 
+        function lineColor(color) {
+            line.strokeStyle = color
         }
 
 
-
-        function stopDrawing(){
-            drawsLineWhenMouseMoves.isMoving = false;
-        }
-
-
-        function drawsLineWhenMouseMoves() {
-            var isMoving = true;
-
-            if (isMoving == true) {
-               document.addEventListener('mousemove', setPosition);
-               var canvas = document.getElementById("mycanvas");
-               var myline = canvas.getContext("2d");
-               myline.lineWidth = 10;
-               myline.beginPath();
-               myline.moveTo(pos.x, pos.y);
-               myline.lineTo((pos.x+1), (pos.y+1));
-               myline.stroke();
-               
-       } 
+        function setBeginLinePosition() {
+            line.beginPath();
+            line.moveTo(pos.x, pos.y);
 
         }
 
-
-        //function myTestingFunction() {
-         //   while (drawsLineWhenMouseMoves.isMoving == true) {
-
-         //   }
-        
+        function startDrawing(){
+            myvar = setInterval(drawLine, 10);
+        }
 
 
+        function drawLine(){
+            line.lineTo(pos.x, pos.y);
+            line.stroke();
+        }
 
 
+        function finishDrawing(){
+            clearInterval(myvar);
+        }
 
 
-
-
+        document.addEventListener("mousemove", setCursorPosition);
+        document.addEventListener("mousedown", setBeginLinePosition);
+        document.addEventListener("mousedown", startDrawing);
+        document.addEventListener("mouseup", finishDrawing);
 
     </script>
-
-
-
-    <script>
-
-        var c = document.getElementById("mycanvas");
-        var ctx = c.getContext("2d");
-        ctx.moveTo(0,0);
-        ctx.lineTo(200,100);
-        ctx.stroke();
-        var dtx = c.getContext("2d");
-        dtx.beginPath();
-        dtx.arc(95, 80, 30, 0, 2 * Math.PI);
-        dtx.stroke();
-
-
-
-    </script>
-
-    <script>
-        function linje_function(){
-            var canvas = document.getElementById("mycanvas");
-            var linje = canvas.getContext("2d");
-            linje.moveTo(2,2);
-            linje.lineTo(300,300);
-            linje.stroke();
-        }
-    </script>
-
 
 </body>
