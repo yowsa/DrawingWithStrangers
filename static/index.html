@@ -4,12 +4,12 @@
 
 <body>
     <canvas id="mycanvas" width="400" height="400" style="border: 1px solid #000fff;"></canvas><p></p>
-    <button onclick="lineColor('black')">Black Line</button>
-    <button onclick="lineColor('red')">Red Line</button>
-    <button onclick="lineColor('green')">Green Line</button><p></p>
-    <button onclick="increaseStroke()">Increase stroke width</button>
+    <button onclick="input.lineColor('black')">Black Line</button>
+    <button onclick="input.lineColor('red')">Red Line</button>
+    <button onclick="input.lineColor('green')">Green Line</button><p></p>
+    <button onclick="input.increaseStroke()">Increase stroke width</button>
     <p id="strokeSize"></p>
-    <button onclick="decreaseStroke()">Decrease stroke width</button>
+    <button onclick="input.decreaseStroke()">Decrease stroke width</button>
     <p id="screen-log"></p>
 
     <script>
@@ -30,77 +30,96 @@
         pos.y = e.clientY;
     }
 
-    
-    
 
-    var canvas = document.getElementById("mycanvas");
-    var line = canvas.getContext("2d");
-    line.lineWidth = 5;
-    line.strokeStyle = "#ff0000"
-
-   showStrokeSize();
+    
 
     function showStrokeSize() {
-        document.getElementById("strokeSize").innerText = line.lineWidth
+        document.getElementById("strokeSize").innerText = input.line.lineWidth
 
     }
-
-
 
     var strokeWidth = document.getElementById("strokeSize")
-       // var width = strokeSize.getContext(line.lineWidth)
 
-       function lineColor(color) {
-        line.strokeStyle = color
+
+//{widh:5, color:blue, position;[5,6,7,7,5,4,4{3;4},{5:7}]}
+
+
+// class som ritar
+class CanvasInput {
+
+    constructor(canvasID){
+        this.canvasID = canvasID
+        this.canvas = document.getElementById(this.canvasID);
+        this.line = this.canvas.getContext("2d");
+        this.line.lineWidth = 5;
+        this.line.strokeStyle = "#ff0000"
     }
 
-    function increaseStroke() {
-        if (line.lineWidth < 20){
-            line.lineWidth += 1
+
+
+
+    lineColor(color) {
+        this.color = color;
+        this.line.strokeStyle = this.color;
+    }
+
+    increaseStroke() {
+        if (this.line.lineWidth < 20){
+            this.line.lineWidth += 1
         } 
         showStrokeSize();
     }
 
-    function decreaseStroke() {
-        if (line.lineWidth > 1){
-            line.lineWidth -= 1
+    decreaseStroke() {
+        if (this.line.lineWidth > 1){
+            this.line.lineWidth -= 1
         }
         showStrokeSize();
-
-
     }
 
 
-
-
-
-
-    function setBeginLinePosition() {
-        line.beginPath();
-        line.moveTo(pos.x, pos.y);
+    setBeginLinePosition() {
+        this.line.beginPath();
+        this.line.moveTo(pos.x, pos.y);
 
     }
 
-    function startDrawing(){
-        myvar = setInterval(drawLine, 10);
+    drawLine(){
+        this.line.lineTo(pos.x, pos.y);
+        this.line.stroke();
+    }
+
+    startDrawing(){
+        this.myvar = setInterval(this.drawLine.bind(this), 100);
+    }
+
+    finishDrawing(){
+        clearInterval(this.myvar);
     }
 
 
-    function drawLine(){
-        line.lineTo(pos.x, pos.y);
-        line.stroke();
-    }
+}
+
+input = new CanvasInput("mycanvas");
+showStrokeSize();
 
 
-    function finishDrawing(){
-        clearInterval(myvar);
-    }
+document.addEventListener("mousemove", setCursorPosition);
+document.addEventListener("mousedown", input.setBeginLinePosition.bind(input));
+document.addEventListener("mousedown", input.startDrawing.bind(input));
+document.addEventListener("mouseup", input.finishDrawing.bind(input));
 
 
-    document.addEventListener("mousemove", setCursorPosition);
-    document.addEventListener("mousedown", setBeginLinePosition);
-    document.addEventListener("mousedown", startDrawing);
-    document.addEventListener("mouseup", finishDrawing);
+
+class ServerTalker {
+
+}
+
+
+// class som skickar och tar emot info från backend
+
+
+
 
 </script>
 
