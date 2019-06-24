@@ -1,42 +1,68 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, json
 #from flask import json
 
 app = Flask(__name__)
 
-mydict = {'key' : 'value', 'hey' : 'yo'}
+#draw.addLine
+#draw.getLines()
+drawnLinesData = []
 
 @app.route('/hello', methods=['GET', 'POST'])
 def hello_world():
     result = "results"
     value = request.args.get('name')
+    # stufa om data\
+    # kalla pa draws.addLines(stufadData)
     return jsonify({"hej" : value})
 
 
 
-@app.route('/convertor', methods=['POST'])
+@app.route('/convert', methods=['POST'])
 def convert():
-    #result = "results"
-    value = request.json['name']
-    mydict['hej'] = str(value)
-    return jsonify(mydict)
+
+    info = request.get_json(force=True)
+    draws.addLine(info)
+
+    print(info) 
+    print (drawnLinesData[0]['color'])  
+    print (drawnLinesData[0]['strokeWidth'])  
+    #color = request.form['color']
+    #strokeWidth = request.form['strokeWidth']
+    #positions = request.form['positions']
+    
+
+    return jsonify(info)
 
 
 
+#lineData = {'lineNumber' : [width, color, {positions :[pos.x, pos.y, pos.x, pos,y, pos.x, pos.y]}]}
 
-print(mydict)
+"""
+lista med dicts:
+{
+  width: 5,
+  color: "red",
+  positions{x, y, x, y]
+}
+"""
+
 
 class DrawReceiver:
-    def __init__(self, your_route):
-      self.your_route = your_route
-      @app.route(your_route, methods=['POST'])
-      
-      def jsonConvertor():
-        value = request.json['name']
-        mydict['hej'] = str(value)
-        return jsonify(mydict)
 
-draws = DrawReceiver('/convert')
+    #def __init__(self):
+        
+       # self.drawnLinesData = drawnLinesData
 
+
+    #{"color":"black","positions":"[5,6]","strokeWidth":"5"}
+
+    def addLine(self, info):
+        drawnLinesData.append(info)
+        print(drawnLinesData)
+
+
+
+draws = DrawReceiver()
 
 
 # Class som tar emot ritade streck, kan skicka ut ritade streck, ta bort gamla streck + test
