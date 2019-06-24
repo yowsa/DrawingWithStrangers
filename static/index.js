@@ -3,9 +3,9 @@
 
 var color = 'black'
 var strokeWidth = 5
-var positions = "[5,6]"
+var positions = [5,6]
 var info = {"color": color, "strokeWidth" : strokeWidth}
-var infos = JSON.stringify({"color" : color, "strokeWidth" : strokeWidth})
+var infos = JSON.stringify({"color" : color, "strokeWidth" : strokeWidth, 'positions' : positions})
 
 /*
 $.ajax({

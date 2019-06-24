@@ -5,15 +5,21 @@ app = Flask(__name__)
 
 #draw.addLine
 #draw.getLines()
-drawnLinesData = []
+class DrawReceiver:
+    
+    def __init__(self):
+        self.drawnLinesData = []
 
-@app.route('/hello', methods=['GET', 'POST'])
-def hello_world():
-    result = "results"
-    value = request.args.get('name')
-    # stufa om data\
-    # kalla pa draws.addLines(stufadData)
-    return jsonify({"hej" : value})
+    #{"color":"black","positions":"[5,6]","strokeWidth":"5"}
+
+    def addLine(self, info):
+        self.drawnLinesData.append(info)
+        print(self.drawnLinesData)
+
+
+
+draws = DrawReceiver()
+
 
 
 
@@ -24,8 +30,9 @@ def convert():
     draws.addLine(info)
 
     print(info) 
-    print (drawnLinesData[0]['color'])  
-    print (drawnLinesData[0]['strokeWidth'])  
+    print (draws.drawnLinesData[0]['color'])  
+    print (draws.drawnLinesData[0]['strokeWidth']) 
+    print (draws.drawnLinesData[0]['positions'][1]) 
     #color = request.form['color']
     #strokeWidth = request.form['strokeWidth']
     #positions = request.form['positions']
@@ -35,7 +42,17 @@ def convert():
 
 
 
-#lineData = {'lineNumber' : [width, color, {positions :[pos.x, pos.y, pos.x, pos,y, pos.x, pos.y]}]}
+
+
+"""@app.route('/hello', methods=['GET', 'POST'])
+def hello_world():
+    result = "results"
+    value = request.args.get('name')
+    # stufa om data\
+    # kalla pa draws.addLines(stufadData)
+    return jsonify({"hej" : value})
+
+"""
 
 """
 lista med dicts:
@@ -47,32 +64,9 @@ lista med dicts:
 """
 
 
-class DrawReceiver:
-
-    #def __init__(self):
-        
-       # self.drawnLinesData = drawnLinesData
-
-
-    #{"color":"black","positions":"[5,6]","strokeWidth":"5"}
-
-    def addLine(self, info):
-        drawnLinesData.append(info)
-        print(drawnLinesData)
-
-
-
-draws = DrawReceiver()
 
 
 # Class som tar emot ritade streck, kan skicka ut ritade streck, ta bort gamla streck + test
-#farg, tjocklek och position {line : [3,4,5,6,7,8,8,9,0,]}
 
 
 # funtion som gor om ovan till json
-
-"""
-@app.route('/second')
-def second_page():
-    return 'Second page'
-"""
