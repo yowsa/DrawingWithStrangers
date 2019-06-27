@@ -14,7 +14,11 @@ class DrawReceiver:
 
     def addLine(self, info):
         self.drawnLinesData.append(info)
-        print(self.drawnLinesData)
+
+
+    def getLines(self):
+        return self.drawnLinesData
+
 
 
 
@@ -26,33 +30,38 @@ draws = DrawReceiver()
 @app.route('/convert', methods=['POST'])
 def convert():
 
-    info = request.get_json(force=True)
+    info = request.get_json()
     draws.addLine(info)
 
     print(info) 
-    print (draws.drawnLinesData[0]['color'])  
-    print (draws.drawnLinesData[0]['strokeWidth']) 
-    print (draws.drawnLinesData[0]['positions'][1]) 
-    #color = request.form['color']
-    #strokeWidth = request.form['strokeWidth']
-    #positions = request.form['positions']
+    print (info['color'])  
+    print (info['strokeWidth']) 
+    print (info['positions']) 
+    print(draws.drawnLinesData)
     
+    return jsonify(info)
+
+
+@app.route('/linestojs', methods=['GET'])
+def linesToJs():
+
+    info = request.get_json()
+    draws.getLines(info)
 
     return jsonify(info)
 
 
 
 
-
-"""@app.route('/hello', methods=['GET', 'POST'])
+@app.route('/hello', methods=['GET'])
 def hello_world():
-    result = "results"
-    value = request.args.get('name')
+    #result = "results"
+    #value = request.args.get('name')
     # stufa om data\
     # kalla pa draws.addLines(stufadData)
-    return jsonify({"hej" : value})
+    return jsonify(draws.getLines())
 
-"""
+
 
 """
 lista med dicts:

@@ -9,19 +9,25 @@ class TestDraw(unittest.TestCase):
         self.assertEqual(n.my_function(), "hejsan")
 
 
-if __name__ == '__main__':
-    unittest.main()
-
-
 class test_convertor(unittest.TestCase):
 
     def test_convertor_to_dict(self):
         # Arrange
-        n = main.DrawReceiever()
-        n.addLine(x, y)
+        n = main.DrawReceiver()
+        startLength = len(n.getLines())
+        info = {"color" : 'black', "strokeWidth" : 5, 'positions' : [5,6]}
+        n.addLine(info)
+        addedLength = startLength + 1
+        listOfLines = n.getLines()
+        lastEntry = len(listOfLines)-1
 
         # Act
-        lines = n.getLines()
+        postAddlines = len(n.getLines())
 
         # Assert
-        self.assertEqual(lines, {lines: [], color: []})
+        self.assertEqual(postAddlines, addedLength)
+        self.assertEqual(listOfLines[lastEntry], info)
+
+
+if __name__ == '__main__':
+    unittest.main()
