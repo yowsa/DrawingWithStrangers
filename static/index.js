@@ -1,24 +1,15 @@
+// lista med alla ritade linjer
 
+var prevDrawnLines = []
 
-/*
-var color = 'black'
-var strokeWidth = 5
-var positions = [5,6]
-var info = {"color": color, "strokeWidth" : strokeWidth, 'positions' : positions}
-var infos = JSON.stringify({"color" : color, "strokeWidth" : strokeWidth, 'positions' : positions})
-*/
-var linesDrawn = []
-
-
-
-function sendPosition() {
+// en function som skickar data till python
+function sendLineData() {
 	$.ajax({
 		type: "POST",
 		dataType: "json",
 		contentType: "application/json",
-
 		url: "/convert",
-		data: input.lineInfo(),
+		data: input.lineData(),
 		success: function(x){
 			alert(JSON.stringify(x))
 		}
@@ -26,60 +17,224 @@ function sendPosition() {
 
 }
 
-//sendPosition()
+// en function som tar emot data fran python
 
-/*
-function drawnLines() {
+function getLineData() {
+	$.ajax({
+		datatype: "json",
+		url: "/hello",
+		success: function(x){
+			prevDrawnLines.push(x)
+			alert(JSON.stringify(prevDrawnLines))
+			alert(prevDrawnLines[0].length + "hejsan")
+			hej.drawLinePositions()
+		}
+	})
 
-	linesDrawn.forEach(function(line){
-		console.log(line);
-	});
 }
-*/
+
+
+
+// vissa saker ska laddas efter att html ar laddad
+
+$(function(){});
+
+
+
+// class som ritar ut tidigare ritade linjer
+
+class drawPrevDrawnLines {
+
+	constructor(){
+
+	}
+
+	lineData(){
+
+	}
+
+	startDrawing(){
+
+
+	}
+
+	drawAllPositions(){
+
+	}
+
+}
+
+// class som sköter line features? typ farg och tjocklek
+
+class lineFeatures {
+
+	showStrokeSize(){
+
+	}
+
+	setLineColor(){
+
+	}
+
+	increaseStrokeWidth(){
+
+	}
+
+	decreaseStrokeWidth(){
+
+	}
+}
+
+
+
+
+
+
+// class som skapar nya ritade linjer nar du trycker
+
+class drawNewLines {
+
+
+	constructor(canvasID){
+		this.pos = {x: 0, y:0};
+		this.canvasID = canvasID;
+		this.canvas = document.getElementById(this.canvasID);
+		this.line = this.canvas.getContext("2d");
+		this.line.lineWidth = 5;
+		this.line.strokeStyle = "#ff0000";
+		this.linePositions = []
+
+		this.canvas.addEventListener("mousemove", this.setCursorPosition.bind(this));
+		this.canvas.addEventListener("mousedown", this.setBeginLinePosition.bind(this));
+		this.canvas.addEventListener("mousedown", this.startDrawing.bind(this));
+		document.addEventListener("mouseup", this.finishDrawing.bind(this));
+	}
+
+	setCursorPosition(e){
+		this.e = e
+		this.pos.x = this.e.clientX;
+		this.pos.y = this.e.clientY;
+
+	}
+/*
+	lineData(){
+		var lineData = JSON.stringify({"strokeStyle" : this.line.strokeStyle, "lineWidth" : this.line.lineWidth, 'positions' : this.linePositions})
+		return lineData
+	}
+	*/
+	setBeginLinePosition() {
+		this.line.beginPath();
+		this.line.moveTo(this.pos.x, this.pos.y);
+		//this.linePositions.push(this.pos.x, this.pos.y);
+		return this.pos.x, this.pos.y
+
+	}
+
+	startDrawing(){
+		this.drawingLines = setInterval(this.drawAllPositions.bind(this), 1000);
+
+	}
+
+	drawAllPositions(){
+		this.line.lineTo(this.pos.x, this.pos.y);
+		this.line.stroke();
+
+		//this.linePositions.push(this.pos.x, this.pos.y);
+
+	}
+
+	finishDrawing(){
+		clearInterval(this.drawingLines);
+		//this.linePositions = [];
+
+	}
+
+
+
+
+}
+
+// class som samlar lineData
+
+class collectLineData {
+
+	constructor(){
+		//var this.strokeStyle = "";
+		//var this.lineWidth = "":
+		//var this.linePositions = [];
+	}
+
+	
+	addBeginLinePosition(){
+		this.linePositions.push(this.pos.x, this.pos.y);
+
+	}
+
+	addAllPositions(){
+		this.linePositions.push(this.pos.x, this.pos.y);
+
+	}
+
+	lineData() {
+		var lineData = JSON.stringify({"strokeStyle" : this.line.strokeStyle, "lineWidth" : this.line.lineWidth, 'positions' : this.linePositions})
+		return lineData
+	}
+
+	clearLineData(){
+		this.linePositions = []
+	}
+
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
 
 
 $(function(){
 
-	function showStrokeSize() {
-		document.getElementById("strokeSize").innerText = input.line.lineWidth
+
+function showStrokeSize() {
+	document.getElementById("strokeSize").innerText = drawNewLines.line.lineWidth
+
+}
+
+class DrawExistingLines {
+
+	constructor(canvasID, strokeStyle, width, pos){
+		this.pos = pos;
+
+		this.canvasID = canvasID;
+		this.canvas = document.getElementById(this.canvasID);
+		this.line = this.canvas.getContext("2d");
+		this.line.lineWidth = width
+		this.line.strokeStyle = strokeStyle
+
+		this.myLine = [0,1,2,3,4,5,6,7,8]
+	}
+
+
+	start(){
+		this.line.beginPath();
+		this.line.moveTo(this.pos[0], this.pos[1]);
 
 	}
 
-	class DrawExistingLines {
+	aLine(){
+		this.line.lineTo((this.pos[0]+50), (this.pos[1]+50));
+		this.line.stroke();
 
-		constructor(canvasID, color, width, pos){
-			this.pos = pos;
+	}
 
-			this.canvasID = canvasID;
-			this.canvas = document.getElementById(this.canvasID);
-			this.line = this.canvas.getContext("2d");
-			this.line.lineWidth = width
-			this.line.strokeStyle = color
-
-			this.myLine = [0,1,2,3,4,5,6,7,8]
-		}
-
-
-		start(){
-			this.line.beginPath();
-			this.line.moveTo(this.pos[0], this.pos[1]);
-
-		}
-
-		aLine(){
-			this.line.lineTo((this.pos[0]+50), (this.pos[1]+50));
-			this.line.stroke();
-
-		}
-
-		drawLinePositions(){
+	drawLinePositions(){
 			//  this.pos.forEach(function(){
 			//	return this.aLine()
 			var that = this;
-			linesDrawn[0].forEach(function(x){
+			prevDrawnLines[0].forEach(function(x){
 				for (var i in x){
-					that.line.lineWidth = x["strokeWidth"]
-					alert(i + x["strokeWidth"])
+					that.line.lineWidth = x["lineWidth"]
+					that.line.strokeStyle = x["strokeStyle"]
+					//alert(i + x["lineWidth"])
 				}
 			})
 /*
@@ -87,9 +242,6 @@ $(function(){
 				alert(i)
 			}
 			*/
-
-			//  this.pos.forEach(function(){
-			//	return this.aLine()
 		}
 
 	}
@@ -97,128 +249,136 @@ $(function(){
 
 
 
-	var hej = new DrawExistingLines("mycanvas", "green", 5, [200, 300, 400, 500])
-	hej.start()
+	//var hej = new DrawExistingLines("mycanvas", "green", 5, [200, 300, 400, 500])
+	//hej.start()
 
-	hej.aLine()
+	//hej.aLine()
 	//hej.drawLinePositions()
+
+	//getLineData()
 
 	$.ajax({
 		datatype: "json",
 		url: "/hello",
-	//data: {"name" : "josefin"},
-	    success: function(x){
-		linesDrawn.push(x)
-		alert(JSON.stringify(linesDrawn))
-		//drawnLines();
-		alert(linesDrawn[0].length + "hejsan")
-		hej.drawLinePositions()
-	}
-})
-
-
-//{widh:5, color:blue, position;[5,6,7,7,5,4,4{3;4},{5:7}]}
-
-
-// class som ritar
-class CanvasInput {
-
-	pos = {x: 0, y:0};
-
-	setCursorPosition(e) {
-		this.e = e
-		this.pos.x = this.e.clientX;
-		this.pos.y = this.e.clientY;
-	}
-
-	constructor(canvasID){
-		this.canvasID = canvasID;
-		this.canvas = document.getElementById(this.canvasID);
-		this.line = this.canvas.getContext("2d");
-		this.line.lineWidth = 5;
-		this.line.strokeStyle = "#ff0000";
-
-		this.linePositions = []
-	}
-
-	lineInfo(){
-		var lineInfo = JSON.stringify({"color" : this.line.strokeStyle, "strokeWidth" : this.line.lineWidth, 'positions' : this.linePositions})
-		return lineInfo
-	}
-
-	lineColor(color) {
-		this.color = color;
-		this.line.strokeStyle = this.color;
-	}
-
-	increaseStroke() {
-		if (this.line.lineWidth < 20){
-			this.line.lineWidth += 1
-		} 
-		showStrokeSize();
-	}
-
-	decreaseStroke() {
-		if (this.line.lineWidth > 1){
-			this.line.lineWidth -= 1
+		success: function(x){
+			prevDrawnLines.push(x)
+			alert(JSON.stringify(prevDrawnLines))
+			alert(prevDrawnLines[0].length + "hejsan")
+			//hej.drawLinePositions()
 		}
-		showStrokeSize();
+	})
+
+	class CanvasInput {
+
+		setCursorPosition(e) {
+			this.e = e;
+			this.pos.x = this.e.clientX;
+			this.pos.y = this.e.clientY;
+		}
+
+		constructor(canvasID){
+			this.pos = {x: 0, y:0};
+			this.canvasID = canvasID;
+			this.canvas = document.getElementById(this.canvasID);
+			this.line = this.canvas.getContext("2d");
+			this.line.lineWidth = 5;
+			this.line.strokeStyle = "#ff0000";
+
+			this.linePositions = []
+
+			this.canvas.addEventListener("mousemove", this.setCursorPosition.bind(this));
+			this.canvas.addEventListener("mousedown", this.setBeginLinePosition.bind(this));
+			this.canvas.addEventListener("mousedown", this.startDrawing.bind(this));
+			document.addEventListener("mouseup", this.finishDrawing.bind(this));
+
+		}
+
+		lineData(){
+			var lineData = JSON.stringify({"strokeStyle" : this.line.strokeStyle, "lineWidth" : this.line.lineWidth, 'positions' : this.linePositions})
+			return lineData
+		}
+
+		lineColor(strokeStyle) {
+			this.strokeStyle = strokeStyle;
+			this.line.strokeStyle = this.strokeStyle;
+		}
+
+		increaseStroke() {
+			if (this.line.lineWidth < 20){
+				this.line.lineWidth += 1
+			} 
+			showStrokeSize();
+		}
+
+		decreaseStroke() {
+			if (this.line.lineWidth > 1){
+				this.line.lineWidth -= 1
+			}
+			showStrokeSize();
+		}
+
+
+		setBeginLinePosition() {
+			this.line.beginPath();
+			this.line.moveTo(this.pos.x, this.pos.y);
+			//this.linePositions = [];
+			this.linePositions.push(this.pos.x, this.pos.y);
+
+		}
+
+		drawLine(){
+			this.line.lineTo(this.pos.x, this.pos.y);
+			this.line.stroke();
+			this.linePositions.push(this.pos.x, this.pos.y);
+		}
+
+		startDrawing(){
+			this.myvar = setInterval(this.drawLine.bind(this), 1000);
+		}
+
+		finishDrawing(){
+			clearInterval(this.myvar);
+			this.linePositions = [];
+		}
+
+
+
+
+
 	}
 
 
-	setBeginLinePosition() {
-		this.line.beginPath();
-		this.line.moveTo(this.pos.x, this.pos.y);
-		this.linePositions = [];
-		this.linePositions.push(this.pos.x, this.pos.y);
+	class ServerTalker {
+
+		lineCompleted() {
+
+		}
 
 	}
-
-	drawLine(){
-		this.line.lineTo(this.pos.x, this.pos.y);
-		this.line.stroke();
-		this.linePositions.push(this.pos.x, this.pos.y);
-	}
-
-	startDrawing(){
-		this.myvar = setInterval(this.drawLine.bind(this), 1000);
-	}
-
-	finishDrawing(){
-		clearInterval(this.myvar);
-		this.linePositions = [];
-	}
-
-
-}
-
-
-class ServerTalker {
-
-	lineCompleted() {
-
-	}
-
-}
-
-input = new CanvasInput("mycanvas");
-showStrokeSize();
-
-
-input.canvas.addEventListener("mousemove", input.setCursorPosition.bind(input));
-input.canvas.addEventListener("mousedown", input.setBeginLinePosition.bind(input));
-input.canvas.addEventListener("mousedown", input.startDrawing.bind(input));
-document.addEventListener("mouseup", input.lineInfo.bind(input));
-document.addEventListener("mouseup", sendPosition);
-document.addEventListener("mouseup", input.finishDrawing.bind(input));
+/*
+	input = new CanvasInput("mycanvas");
 
 
 
+	//input.canvas.addEventListener("mousemove", input.setCursorPosition.bind(input));
+	//input.canvas.addEventListener("mousedown", input.setBeginLinePosition.bind(input));
+	//input.canvas.addEventListener("mousedown", input.startDrawing.bind(input));
+	document.addEventListener("mouseup", input.lineData.bind(input));
+	document.addEventListener("mouseup", sendLineData);
+	//document.addEventListener("mouseup", input.finishDrawing.bind(input));
+
+*/
+
+	drawNewLines = new drawNewLines('mycanvas');
+
+
+
+	showStrokeSize();
 
 
 });
 
-// class som skickar och tar emot info från backend
+
 
 
 

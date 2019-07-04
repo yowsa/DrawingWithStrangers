@@ -34,8 +34,8 @@ def convert():
     draws.addLine(info)
 
     print(info) 
-    print (info['color'])  
-    print (info['strokeWidth']) 
+    print (info['strokeStyle'])  
+    print (info['lineWidth']) 
     print (info['positions']) 
     print(draws.drawnLinesData)
     
