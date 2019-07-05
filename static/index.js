@@ -11,7 +11,7 @@ function sendLineData() {
 		url: "/convert",
 		data: sendLineData.lineData(),
 		success: function(x){
-			alert(JSON.stringify(x))
+			//alert(JSON.stringify(x))
 		}
 	})
 
@@ -25,8 +25,8 @@ function getLineData() {
 		url: "/hello",
 		success: function(x){
 			prevDrawnLines.push(x)
-			alert(JSON.stringify(prevDrawnLines))
-			alert(prevDrawnLines[0].length + "hejsan")
+			//alert(JSON.stringify(prevDrawnLines))
+			//alert(prevDrawnLines[0].length + "hejsan")
 			hej.drawLinePositions()
 		}
 	})
@@ -66,24 +66,65 @@ class drawPrevDrawnLines {
 
 // class som sköter line features? typ farg och tjocklek
 
-class lineFeatures {
+class LineFeatures {
 
-	showStrokeSize(){
-
+	constructor(){
+		this.strokeStyle = "#ffff00";
+		this.lineWidth = 5;
 	}
 
-	setLineColor(){
-
+	setStrokeStyle(strokeStyle){
+		this.strokeStyle = strokeStyle;
+		return this.strokeStyle;
 	}
 
-	increaseStrokeWidth(){
-
+	getStrokeStyle(){
+		return this.strokeStyle;
 	}
 
-	decreaseStrokeWidth(){
-
+	increaseLineWidth(){
+		if (this.lineWidth < 20){
+			this.lineWidth += 1;
+		}
+		//Flytta detta sen
+		showStrokeSize();
 	}
-}
+
+	decreaseLineWidth(){
+		if (this.lineWidth > 1){
+			this.lineWidth -= 1;
+		}
+		//Flytta detta sen
+		showStrokeSize();
+	}
+
+	getLineWidth() {
+		return this.lineWidth;
+	}
+
+/*
+
+	lineColor(strokeStyle) {
+			this.strokeStyle = strokeStyle;
+			this.line.strokeStyle = this.strokeStyle;
+		}
+
+		increaseStroke() {
+			if (this.line.lineWidth < 20){
+				this.line.lineWidth += 1
+			} 
+			showStrokeSize();
+		}
+
+		decreaseStroke() {
+			if (this.line.lineWidth > 1){
+				this.line.lineWidth -= 1
+			}
+			showStrokeSize();
+		}
+
+		*/
+	}
 
 
 
@@ -92,7 +133,7 @@ class lineFeatures {
 
 // class som skapar nya ritade linjer nar du trycker
 
-class drawNewLines {
+class DrawNewLines {
 
 
 	constructor(canvasID){
@@ -101,10 +142,11 @@ class drawNewLines {
 		this.canvas = document.getElementById(this.canvasID);
 		this.line = this.canvas.getContext("2d");
 		this.line.lineWidth = 5;
-		this.line.strokeStyle = "#ff0000";
+		this.line.strokeStyle = lineFeatures.getStrokeStyle();
 		this.linePositions = []
 
 		this.canvas.addEventListener("mousemove", this.currentCursorPosition.bind(this));
+		this.canvas.addEventListener("mousedown", this.getCurrentLineFeatures.bind(this));
 		this.canvas.addEventListener("mousedown", this.setBeginLinePosition.bind(this));
 		this.canvas.addEventListener("mousedown", this.startDrawing.bind(this));
 		document.addEventListener("mouseup", this.finishDrawing.bind(this));
@@ -128,6 +170,12 @@ class drawNewLines {
 		//this.linePositions.push(this.pos.x, this.pos.y);
 		return this.pos.x, this.pos.y
 
+	}
+
+	getCurrentLineFeatures(){
+		this.line.strokeStyle = lineFeatures.getStrokeStyle();
+		this.line.lineWidth = 5;
+		
 	}
 
 	startDrawing(){
@@ -156,7 +204,7 @@ class drawNewLines {
 
 // class som samlar lineData
 
-class collectLineData {
+class CollectLineData {
 
 	constructor(canvasID){
 		this.pos= {x: 0 , y: 0 }
@@ -297,7 +345,7 @@ $(function(){
 			//hej.drawLinePositions()
 		}
 	})
-
+/*
 	class CanvasInput {
 
 		setCursorPosition(e) {
@@ -377,7 +425,7 @@ $(function(){
 
 	}
 
-
+	*/
 	class ServerTalker {
 
 		lineCompleted() {
@@ -385,6 +433,7 @@ $(function(){
 		}
 
 	}
+
 /*
 	input = new CanvasInput("mycanvas");
 
@@ -399,8 +448,9 @@ $(function(){
 
 	*/
 
-	drawNewLines = new drawNewLines('mycanvas');
-	sendLineData = new collectLineData('mycanvas');
+	lineFeatures = new LineFeatures();
+	drawNewLines = new DrawNewLines('mycanvas');
+	sendLineData = new CollectLineData('mycanvas');
 
 
 
