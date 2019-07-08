@@ -9,9 +9,9 @@ function sendLineData() {
 		dataType: "json",
 		contentType: "application/json",
 		url: "/convert",
-		data: sendLineData.lineData(),
+		data: collectLineData.lineData(),
 		success: function(x){
-			//alert(JSON.stringify(x))
+			alert(JSON.stringify(x))
 		}
 	})
 
@@ -81,7 +81,7 @@ class LineFeatures {
 		return this.lineWidth;
 	}
 
-	}
+}
 
 
 
@@ -102,16 +102,15 @@ class DrawNewLines {
 		this.linePositions = []
 		
 		this.canvas.addEventListener("mousedown", this.getCurrentLineFeatures.bind(this));
-		this.canvas.addEventListener("mousemove", this.currentCursorPosition.bind(this));
+		document.addEventListener("mousemove", this.currentCursorPosition.bind(this));
 		this.canvas.addEventListener("mousedown", this.setBeginLinePosition.bind(this));
 		this.canvas.addEventListener("mousedown", this.startDrawing.bind(this));
 		document.addEventListener("mouseup", this.finishDrawing.bind(this));
 	}
 
 	currentCursorPosition(e){
-		this.e = e
-		this.pos.x = this.e.clientX;
-		this.pos.y = this.e.clientY;
+		this.pos.x = e.clientX;
+		this.pos.y = e.clientY;
 
 	}
 /*
@@ -170,23 +169,33 @@ class CollectLineData {
 		this.lineWidth = lineFeatures.getLineWidth();
 		this.strokeStyle = lineFeatures.getStrokeStyle();
 		this.linePositions = [];
+		var that = this;
+
+
+		document.addEventListener("mousemove", this.currentCursorPosition.bind(this));
 		this.canvas.addEventListener("mousedown", this.getCurrentLineFeatures.bind(this));
-		this.canvas.addEventListener("mousemove", this.currentCursorPosition.bind(this));
 		this.canvas.addEventListener("mousedown", this.addBeginLinePosition.bind(this));
 		this.canvas.addEventListener("mousedown", this.addAllPositions.bind(this));
+
 		document.addEventListener("mouseup", this.stopAddingPositions.bind(this));
 		document.addEventListener("mouseup", this.lineData.bind(this));
 		//////////////////////////////////////////////////////////////
 		//TODO: Update the below event sendlinedata to seperate function/class ass this is a colleclinedata class, be aware of the clearLinePositions function
-		document.addEventListener("mouseup", sendLineData); 
+		document.addEventListener("mouseup", function(){
+			if (that.linePositions.length >= 4){
+				sendLineData();
+			}
+		}); 
+		
 		//////////////////////////////////////////////////////////////
 		document.addEventListener("mouseup", this.clearLinePositions.bind(this));
+
+
 	}
 
 	currentCursorPosition(e){
-		this.e = e
-		this.pos.x = this.e.clientX;
-		this.pos.y = this.e.clientY;
+		this.pos.x = e.clientX;
+		this.pos.y = e.clientY;
 
 	}
 
@@ -317,7 +326,7 @@ class DrawExistingLines {
 
 	lineFeatures = new LineFeatures();
 	drawNewLines = new DrawNewLines('mycanvas');
-	sendLineData = new CollectLineData('mycanvas');
+	collectLineData = new CollectLineData('mycanvas');
 
 
 
@@ -328,22 +337,28 @@ class DrawExistingLines {
 /// Button functionality in HTML
 /// ///////////////////////////////////////////////////////////////
 
-	$("#testbutton").click(function() { alert("hej!") })
-	
-	$("#setColor-Black").click(function(){
-		lineFeatures.setStrokeStyle('black');
-	});
+$("#setColor-Black").click(function(){
+	lineFeatures.setStrokeStyle('black');
+});
+
+$("#setColor-Red").click(function(){
+	lineFeatures.setStrokeStyle('red');
+});
+
+$("#setColor-Green").click(function(){
+	lineFeatures.setStrokeStyle('green');
+});
 
 
-	$("#increaseLineWidth").click(function(){
-		lineFeatures.increaseLineWidth();
-		showStrokeSize();
-	});
+$("#increaseLineWidth").click(function(){
+	lineFeatures.increaseLineWidth();
+	showStrokeSize();
+});
 
-	$("#decreaseLineWidth").click(function(){
-		lineFeatures.decreaseLineWidth();
-		showStrokeSize();
-	});
+$("#decreaseLineWidth").click(function(){
+	lineFeatures.decreaseLineWidth();
+	showStrokeSize();
+});
 
 
 });
