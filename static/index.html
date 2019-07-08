@@ -4,12 +4,13 @@
 
 <body>
     <canvas id="mycanvas" width="400" height="400" style="border: 1px solid #000fff;"></canvas><p></p>
-    <button onclick="lineFeatures.setStrokeStyle('black')">Black Line</button>
+    <button id="setColor-Black">Black Line</button>
     <button onclick="lineFeatures.setStrokeStyle('red')">Red Line</button>
     <button onclick="lineFeatures.setStrokeStyle('green')">Green Line</button><p></p>
-    <button onclick="input.increaseStroke()">Increase stroke width</button>
-    <p id="strokeSize"></p>
-    <button onclick="input.decreaseStroke()">Decrease stroke width</button>
+    <button onclick="lineFeatures.increaseLineWidth()">Increase stroke width</button>
+    <button id="testbutton">Test Button</button>
+    <p id="lineWidth"></p>
+    <button onclick="lineFeatures.decreaseLineWidth()">Decrease stroke width</button>
     <p id="screen-log"></p>
 
     <script>

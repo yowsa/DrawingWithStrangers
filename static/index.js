@@ -27,7 +27,7 @@ function getLineData() {
 			prevDrawnLines.push(x)
 			//alert(JSON.stringify(prevDrawnLines))
 			//alert(prevDrawnLines[0].length + "hejsan")
-			hej.drawLinePositions()
+			//hej.drawLinePositions()
 		}
 	})
 
@@ -37,32 +37,12 @@ function getLineData() {
 
 // vissa saker ska laddas efter att html ar laddad
 
-$(function(){});
+$(function(){
 
 
 
-// class som ritar ut tidigare ritade linjer
+});
 
-class drawPrevDrawnLines {
-
-	constructor(){
-
-	}
-
-	lineData(){
-
-	}
-
-	startDrawing(){
-
-
-	}
-
-	drawAllPositions(){
-
-	}
-
-}
 
 // class som sköter line features? typ farg och tjocklek
 
@@ -75,7 +55,6 @@ class LineFeatures {
 
 	setStrokeStyle(strokeStyle){
 		this.strokeStyle = strokeStyle;
-		return this.strokeStyle;
 	}
 
 	getStrokeStyle(){
@@ -87,7 +66,7 @@ class LineFeatures {
 			this.lineWidth += 1;
 		}
 		//Flytta detta sen
-		showStrokeSize();
+		//showStrokeSize();
 	}
 
 	decreaseLineWidth(){
@@ -95,7 +74,7 @@ class LineFeatures {
 			this.lineWidth -= 1;
 		}
 		//Flytta detta sen
-		showStrokeSize();
+		//showStrokeSize();
 	}
 
 	getLineWidth() {
@@ -141,12 +120,12 @@ class DrawNewLines {
 		this.canvasID = canvasID;
 		this.canvas = document.getElementById(this.canvasID);
 		this.line = this.canvas.getContext("2d");
-		this.line.lineWidth = 5;
+		this.line.lineWidth = lineFeatures.getLineWidth();
 		this.line.strokeStyle = lineFeatures.getStrokeStyle();
 		this.linePositions = []
-
-		this.canvas.addEventListener("mousemove", this.currentCursorPosition.bind(this));
+		
 		this.canvas.addEventListener("mousedown", this.getCurrentLineFeatures.bind(this));
+		this.canvas.addEventListener("mousemove", this.currentCursorPosition.bind(this));
 		this.canvas.addEventListener("mousedown", this.setBeginLinePosition.bind(this));
 		this.canvas.addEventListener("mousedown", this.startDrawing.bind(this));
 		document.addEventListener("mouseup", this.finishDrawing.bind(this));
@@ -174,7 +153,7 @@ class DrawNewLines {
 
 	getCurrentLineFeatures(){
 		this.line.strokeStyle = lineFeatures.getStrokeStyle();
-		this.line.lineWidth = 5;
+		this.line.lineWidth = lineFeatures.getLineWidth();
 		
 	}
 
@@ -273,38 +252,39 @@ $(function(){
 
 
 	function showStrokeSize() {
-		document.getElementById("strokeSize").innerText = drawNewLines.line.lineWidth
+
+		document.getElementById("lineWidth").innerText = lineFeatures.getLineWidth();
+
+	}
+// class som ritar ut tidigare ritade linjer
+class DrawExistingLines {
+
+	constructor(canvasID, strokeStyle, width, pos){
+		this.pos = pos;
+
+		this.canvasID = canvasID;
+		this.canvas = document.getElementById(this.canvasID);
+		this.line = this.canvas.getContext("2d");
+		this.line.lineWidth = width
+		this.line.strokeStyle = strokeStyle
+
+		this.myLine = [0,1,2,3,4,5,6,7,8]
+	}
+
+
+	start(){
+		this.line.beginPath();
+		this.line.moveTo(this.pos[0], this.pos[1]);
 
 	}
 
-	class DrawExistingLines {
+	aLine(){
+		this.line.lineTo((this.pos[0]+50), (this.pos[1]+50));
+		this.line.stroke();
 
-		constructor(canvasID, strokeStyle, width, pos){
-			this.pos = pos;
+	}
 
-			this.canvasID = canvasID;
-			this.canvas = document.getElementById(this.canvasID);
-			this.line = this.canvas.getContext("2d");
-			this.line.lineWidth = width
-			this.line.strokeStyle = strokeStyle
-
-			this.myLine = [0,1,2,3,4,5,6,7,8]
-		}
-
-
-		start(){
-			this.line.beginPath();
-			this.line.moveTo(this.pos[0], this.pos[1]);
-
-		}
-
-		aLine(){
-			this.line.lineTo((this.pos[0]+50), (this.pos[1]+50));
-			this.line.stroke();
-
-		}
-
-		drawLinePositions(){
+	drawLinePositions(){
 			//  this.pos.forEach(function(){
 			//	return this.aLine()
 			var that = this;
@@ -340,8 +320,8 @@ $(function(){
 		url: "/hello",
 		success: function(x){
 			prevDrawnLines.push(x)
-			alert(JSON.stringify(prevDrawnLines))
-			alert(prevDrawnLines[0].length + "hejsan")
+			//alert(JSON.stringify(prevDrawnLines))
+			//alert(prevDrawnLines[0].length + "hejsan")
 			//hej.drawLinePositions()
 		}
 	})
@@ -455,6 +435,11 @@ $(function(){
 
 
 	showStrokeSize();
+
+	$("#testbutton").click(function() { alert("hej!") })
+	$("#setColor-Black").click(function(){
+		lineFeatures.setStrokeStyle('black');
+	});
 
 
 });
