@@ -65,16 +65,12 @@ class LineFeatures {
 		if (this.lineWidth < 20){
 			this.lineWidth += 1;
 		}
-		//Flytta detta sen
-		//showStrokeSize();
 	}
 
 	decreaseLineWidth(){
 		if (this.lineWidth > 1){
 			this.lineWidth -= 1;
 		}
-		//Flytta detta sen
-		//showStrokeSize();
 	}
 
 	getLineWidth() {
@@ -82,9 +78,6 @@ class LineFeatures {
 	}
 
 }
-
-
-
 
 
 
@@ -99,7 +92,7 @@ class DrawNewLines {
 		this.line = this.canvas.getContext("2d");
 		this.line.lineWidth = lineFeatures.getLineWidth();
 		this.line.strokeStyle = lineFeatures.getStrokeStyle();
-		this.linePositions = []
+		//this.linePositions = []
 		
 		this.canvas.addEventListener("mousedown", this.getCurrentLineFeatures.bind(this));
 		document.addEventListener("mousemove", this.currentCursorPosition.bind(this));
@@ -111,20 +104,11 @@ class DrawNewLines {
 	currentCursorPosition(e){
 		this.pos.x = e.clientX;
 		this.pos.y = e.clientY;
+	}
 
-	}
-/*
-	lineData(){
-		var lineData = JSON.stringify({"strokeStyle" : this.line.strokeStyle, "lineWidth" : this.line.lineWidth, 'positions' : this.linePositions})
-		return lineData
-	}
-	*/
 	setBeginLinePosition() {
 		this.line.beginPath();
 		this.line.moveTo(this.pos.x, this.pos.y);
-		//this.linePositions.push(this.pos.x, this.pos.y);
-		return this.pos.x, this.pos.y
-
 	}
 
 	getCurrentLineFeatures(){
@@ -135,25 +119,17 @@ class DrawNewLines {
 
 	startDrawing(){
 		this.drawingLines = setInterval(this.drawAllPositions.bind(this), 1000);
-
 	}
 
 	drawAllPositions(){
 		this.line.lineTo(this.pos.x, this.pos.y);
 		this.line.stroke();
-
-		//this.linePositions.push(this.pos.x, this.pos.y);
-
 	}
 
 	finishDrawing(){
 		clearInterval(this.drawingLines);
-		//this.linePositions = [];
 
 	}
-
-
-
 
 }
 
@@ -317,12 +293,6 @@ class DrawExistingLines {
 		}
 	})
 
-
-/*
-	document.addEventListener("mouseup", input.lineData.bind(input));
-	document.addEventListener("mouseup", sendLineData);
-	//document.addEventListener("mouseup", input.finishDrawing.bind(input));
-	*/
 
 	lineFeatures = new LineFeatures();
 	drawNewLines = new DrawNewLines('mycanvas');
