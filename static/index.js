@@ -81,28 +81,6 @@ class LineFeatures {
 		return this.lineWidth;
 	}
 
-/*
-
-	lineColor(strokeStyle) {
-			this.strokeStyle = strokeStyle;
-			this.line.strokeStyle = this.strokeStyle;
-		}
-
-		increaseStroke() {
-			if (this.line.lineWidth < 20){
-				this.line.lineWidth += 1
-			} 
-			showStrokeSize();
-		}
-
-		decreaseStroke() {
-			if (this.line.lineWidth > 1){
-				this.line.lineWidth -= 1
-			}
-			showStrokeSize();
-		}
-
-		*/
 	}
 
 
@@ -305,8 +283,6 @@ class DrawExistingLines {
 	}
 
 
-
-
 	//var hej = new DrawExistingLines("mycanvas", "green", 5, [200, 300, 400, 500])
 	//hej.start()
 
@@ -325,87 +301,7 @@ class DrawExistingLines {
 			//hej.drawLinePositions()
 		}
 	})
-/*
-	class CanvasInput {
 
-		setCursorPosition(e) {
-			this.e = e;
-			this.pos.x = this.e.clientX;
-			this.pos.y = this.e.clientY;
-		}
-
-		constructor(canvasID){
-			this.pos = {x: 0, y:0};
-			this.canvasID = canvasID;
-			this.canvas = document.getElementById(this.canvasID);
-			this.line = this.canvas.getContext("2d");
-			this.line.lineWidth = 5;
-			this.line.strokeStyle = "#ff0000";
-
-			this.linePositions = []
-
-			this.canvas.addEventListener("mousemove", this.setCursorPosition.bind(this));
-			this.canvas.addEventListener("mousedown", this.setBeginLinePosition.bind(this));
-			this.canvas.addEventListener("mousedown", this.startDrawing.bind(this));
-			document.addEventListener("mouseup", this.finishDrawing.bind(this));
-
-		}
-
-		lineData(){
-			var lineData = JSON.stringify({"strokeStyle" : this.line.strokeStyle, "lineWidth" : this.line.lineWidth, 'positions' : this.linePositions})
-			return lineData
-		}
-
-		lineColor(strokeStyle) {
-			this.strokeStyle = strokeStyle;
-			this.line.strokeStyle = this.strokeStyle;
-		}
-
-		increaseStroke() {
-			if (this.line.lineWidth < 20){
-				this.line.lineWidth += 1
-			} 
-			showStrokeSize();
-		}
-
-		decreaseStroke() {
-			if (this.line.lineWidth > 1){
-				this.line.lineWidth -= 1
-			}
-			showStrokeSize();
-		}
-
-
-		setBeginLinePosition() {
-			this.line.beginPath();
-			this.line.moveTo(this.pos.x, this.pos.y);
-			//this.linePositions = [];
-			this.linePositions.push(this.pos.x, this.pos.y);
-
-		}
-
-		drawLine(){
-			this.line.lineTo(this.pos.x, this.pos.y);
-			this.line.stroke();
-			this.linePositions.push(this.pos.x, this.pos.y);
-		}
-
-		startDrawing(){
-			this.myvar = setInterval(this.drawLine.bind(this), 1000);
-		}
-
-		finishDrawing(){
-			clearInterval(this.myvar);
-			this.linePositions = [];
-		}
-
-
-
-
-
-	}
-
-	*/
 	class ServerTalker {
 
 		lineCompleted() {
@@ -415,17 +311,9 @@ class DrawExistingLines {
 	}
 
 /*
-	input = new CanvasInput("mycanvas");
-
-
-
-	//input.canvas.addEventListener("mousemove", input.setCursorPosition.bind(input));
-	//input.canvas.addEventListener("mousedown", input.setBeginLinePosition.bind(input));
-	//input.canvas.addEventListener("mousedown", input.startDrawing.bind(input));
 	document.addEventListener("mouseup", input.lineData.bind(input));
 	document.addEventListener("mouseup", sendLineData);
 	//document.addEventListener("mouseup", input.finishDrawing.bind(input));
-
 	*/
 
 	lineFeatures = new LineFeatures();
