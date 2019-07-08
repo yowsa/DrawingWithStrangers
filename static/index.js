@@ -92,7 +92,6 @@ class LineFeatures {
 
 class DrawNewLines {
 
-
 	constructor(canvasID){
 		this.pos = {x: 0, y:0};
 		this.canvasID = canvasID;
@@ -168,9 +167,10 @@ class CollectLineData {
 		this.canvasID = canvasID;
 		this.canvas = document.getElementById(this.canvasID);
 
-		this.lineWidth = 7;
-		this.strokeStyle = "#000000";
+		this.lineWidth = lineFeatures.getLineWidth();
+		this.strokeStyle = lineFeatures.getStrokeStyle();
 		this.linePositions = [];
+		this.canvas.addEventListener("mousedown", this.getCurrentLineFeatures.bind(this));
 		this.canvas.addEventListener("mousemove", this.currentCursorPosition.bind(this));
 		this.canvas.addEventListener("mousedown", this.addBeginLinePosition.bind(this));
 		this.canvas.addEventListener("mousedown", this.addAllPositions.bind(this));
@@ -190,7 +190,13 @@ class CollectLineData {
 
 	}
 
-	
+	getCurrentLineFeatures(){
+		this.strokeStyle = lineFeatures.getStrokeStyle();
+		this.lineWidth = lineFeatures.getLineWidth();
+		
+	}
+
+
 	addBeginLinePosition(){
 		this.linePositions.push(this.pos.x, this.pos.y);
 
@@ -302,13 +308,6 @@ class DrawExistingLines {
 		}
 	})
 
-	class ServerTalker {
-
-		lineCompleted() {
-
-		}
-
-	}
 
 /*
 	document.addEventListener("mouseup", input.lineData.bind(input));
@@ -324,9 +323,26 @@ class DrawExistingLines {
 
 	showStrokeSize();
 
+
+///////////////////////////////////////////////////////////////////
+/// Button functionality in HTML
+/// ///////////////////////////////////////////////////////////////
+
 	$("#testbutton").click(function() { alert("hej!") })
+	
 	$("#setColor-Black").click(function(){
 		lineFeatures.setStrokeStyle('black');
+	});
+
+
+	$("#increaseLineWidth").click(function(){
+		lineFeatures.increaseLineWidth();
+		showStrokeSize();
+	});
+
+	$("#decreaseLineWidth").click(function(){
+		lineFeatures.decreaseLineWidth();
+		showStrokeSize();
 	});
 
 
