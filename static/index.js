@@ -1,6 +1,6 @@
 // lista med alla ritade linjer
 
-var prevDrawnLines = []
+var prevDrawnLines;
 
 // en function som skickar data till python
 function sendLineData() {
@@ -24,10 +24,12 @@ function getLineData() {
 		datatype: "json",
 		url: "/hello",
 		success: function(x){
-			prevDrawnLines.push(x)
-			//alert(JSON.stringify(prevDrawnLines))
+			prevDrawnLines = x;
+			alert("Previously drawn lines: " + JSON.stringify(prevDrawnLines))
+			return prevDrawnLines
 			//alert(prevDrawnLines[0].length + "hejsan")
 			//hej.drawLinePositions()
+
 		}
 	})
 
@@ -42,8 +44,9 @@ $(function(){
 
 
 });
-
-
+getLineData();
+console.log(prevDrawnLines);
+//alert("outside of function" + JSON.stringify(prevDrawnLines));
 // class som sköter line features? typ farg och tjocklek
 
 class LineFeatures {
@@ -237,13 +240,16 @@ class DrawExistingLines {
 		this.line.lineWidth = width
 		this.line.strokeStyle = strokeStyle
 
-		this.myLine = [0,1,2,3,4,5,6,7,8]
+		this.myTestLine = [{"lineWidth":5,"positions":[116,340,273,152,289,182],"strokeStyle":"#ffff00"},{"lineWidth":7,"positions":[93,56,263,309,304,79,118,288],"strokeStyle":"#ffff00"}];
+		
 	}
 
 
-	start(){
+	start(lineData){
+		var lineData = this.myTestLine[0];
+		//alert(lineData["positions"][0]);
 		this.line.beginPath();
-		this.line.moveTo(this.pos[0], this.pos[1]);
+		this.line.moveTo(lineData["positions"][0], lineData["positions"][1]);
 
 	}
 
@@ -253,35 +259,65 @@ class DrawExistingLines {
 
 	}
 
-	drawLinePositions(){
-			//  this.pos.forEach(function(){
-			//	return this.aLine()
-			var that = this;
-			prevDrawnLines[0].forEach(function(x){
-				for (var i in x){
-					that.line.lineWidth = x["lineWidth"]
-					that.line.strokeStyle = x["strokeStyle"]
-					//alert(i + x["lineWidth"])
-				}
-			})
+
+	getLineFeatures(lineData){
+		var lineData = this.myTestLine[0];
+		this.line.lineWidth = lineData["lineWidth"];
+		this.line.strokeStyle = lineData["strokeStyle"];
+
+	}
+
+	drawLinePositions(lineData){
+		var lineData = this.myTestLine[0];
+		for (var pos = 2 ; pos < lineData["positions"].length ; pos += 2){
+			this.line.lineTo(lineData["positions"][pos], lineData["positions"][pos+1]);
+			this.line.stroke();
+			//alert(lineData["positions"][pos] + ", " + lineData["positions"][pos+1]);
+		}
+
 /*
-			for(var i = 0 ; i < this.myLine.length ; i += 2) {
+		var that = this;
+		this.myTestLine.forEach(function(x){
+			for (var i in x){
+				that.line.lineWidth = x["lineWidth"]
+				that.line.strokeStyle = x["strokeStyle"]
+				//alert(i + x["lineWidth"])
+			}
+		})
+*/
+
+/*
+			for(var i = 0 ; i < 6 ; i += 2) {
 				alert(i)
 			}
-			*/
+			
+			*/		
+
+
+
+		}
+
+
+
+
+		drawAllLines(){
+		// for each dict/line in the total list of lines
+			// set line features to the line
+			// start() line with first two pos
+			// lineTo each position pars (iterate over array) and set stroke.
 		}
 
 	}
 
 
-	//var hej = new DrawExistingLines("mycanvas", "green", 5, [200, 300, 400, 500])
-	//hej.start()
+	var hej = new DrawExistingLines("mycanvas", "green", 5, [200, 300, 400, 500])
+	hej.start()
 
-	//hej.aLine()
-	//hej.drawLinePositions()
+	hej.aLine()
+	hej.drawLinePositions()
 
-	//getLineData()
 
+/*
 	$.ajax({
 		datatype: "json",
 		url: "/hello",
@@ -292,7 +328,7 @@ class DrawExistingLines {
 			//hej.drawLinePositions()
 		}
 	})
-
+	*/
 
 	lineFeatures = new LineFeatures();
 	drawNewLines = new DrawNewLines('mycanvas');
