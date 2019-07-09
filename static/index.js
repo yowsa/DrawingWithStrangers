@@ -18,33 +18,46 @@ function sendLineData() {
 }
 
 // en function som tar emot data fran python
+/*
+function callback(x){
+	prevDrawnLines = x;
+	alert("Previously drawn lines: " + JSON.stringify(prevDrawnLines))
+	return JSON.stringify(prevDrawnLines)
 
-function getLineData() {
+}
+*/
+
+
+function getLineData(callback) {
 	$.ajax({
 		datatype: "json",
 		url: "/hello",
-		success: function(x){
+		success: callback
+
+
+
+/*
+
+		 function(x){
+			
 			prevDrawnLines = x;
 			alert("Previously drawn lines: " + JSON.stringify(prevDrawnLines))
-			return prevDrawnLines
-			//alert(prevDrawnLines[0].length + "hejsan")
-			//hej.drawLinePositions()
-
+			callback(JSON.stringify(x));
+			//return JSON.stringify(prevDrawnLines)
 		}
+
+		*/
+
 	})
 
 }
 
 
+function callback(x){
+	return JSON.stringify(x)
 
-// vissa saker ska laddas efter att html ar laddad
+}
 
-$(function(){
-
-
-
-});
-getLineData();
 //alert("outside of function" + JSON.stringify(prevDrawnLines));
 // class som sköter line features? typ farg och tjocklek
 
@@ -236,9 +249,8 @@ class DrawExistingLines {
 		this.line = this.canvas.getContext("2d");
 		this.line.lineWidth;
 		this.line.strokeStyle;
-
+		//this.allLines = allLines;
 		this.myTestLine = [{"lineWidth":5,"positions":[116,340,273,152,289,182],"strokeStyle":"black"},{"lineWidth":7,"positions":[93,56,263,309,304,79,118,288],"strokeStyle":"#ffff00"}];
-		
 	}
 
 
@@ -261,39 +273,38 @@ class DrawExistingLines {
 		}
 	}
 
-	drawAllLines(){
+	drawAllLines(allLines){
+		//this.allLines = JSON.stringify(allLines);
+		//alert("hejsna" + this.allLines);
 		var that = this;
-			this.myTestLine.forEach(function(x){
-				that.getLineFeatures(x);
-				that.start(x);
-				that.drawLinePositions(x);
-			})
+		allLines.forEach(function(x){
+			that.getLineFeatures(x);
+			that.start(x);
+			that.drawLinePositions(x);
+		})
 
-			
-		}
 
 	}
 
+}
 
+
+//alert(prevDrawnLines);
+//allLines = getLineData();
+//alert(allLines + "blablalbla")
+	//allLines.then(drawExistingLines.drawAllLines());
+	//alert(allLines);
 	var drawExistingLines = new DrawExistingLines("mycanvas")
-	drawExistingLines.drawAllLines();
+	//drawExistingLines.drawAllLines(allLines);
+	getLineData(response => drawExistingLines.drawAllLines(response))
 
 
-/*
-	$.ajax({
-		datatype: "json",
-		url: "/hello",
-		success: function(x){
-			prevDrawnLines.push(x)
-			//alert(JSON.stringify(prevDrawnLines))
-			//alert(prevDrawnLines[0].length + "hejsan")
-			//hej.drawLinePositions()
-		}
-	})
-	*/
+
+
+
 
 	lineFeatures = new LineFeatures();
-	drawNewLines = new DrawNewLines('mycanvas');
+	var drawNewLines = new DrawNewLines('mycanvas');
 	collectLineData = new CollectLineData('mycanvas');
 
 
