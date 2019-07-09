@@ -32,13 +32,6 @@ def convert():
 
     info = request.get_json()
     draws.addLine(info)
-
-    print(info) 
-    print (info['strokeStyle'])  
-    print (info['lineWidth']) 
-    print (info['positions']) 
-    print(draws.drawnLinesData)
-    
     return jsonify(info)
 
 

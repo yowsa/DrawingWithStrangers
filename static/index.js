@@ -189,11 +189,7 @@ class CollectLineData {
 $(function(){
 
 
-	function showStrokeSize() {
 
-		document.getElementById("lineWidth").innerText = lineFeatures.getLineWidth();
-
-	}
 // Drawing existing lines recieved from backend
 
 class DrawExistingLines {
@@ -254,8 +250,13 @@ showStrokeSize();
 
 
 ///////////////////////////////////////////////////////////////////
-/// Button functionality in HTML
+/// Button functionality and visuals in HTML
 /// ///////////////////////////////////////////////////////////////
+
+function showStrokeSize() {
+	document.getElementById("lineWidth").innerText = lineFeatures.getLineWidth();
+}
+
 
 $("#setColor-Yellow").click(function(){
 	lineFeatures.setStrokeStyle('yellow');
