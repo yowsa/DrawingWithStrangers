@@ -1,8 +1,4 @@
-// lista med alla ritade linjer
-
-var prevDrawnLines;
-
-// en function som skickar data till python
+// send new lineData to Python
 function sendLineData() {
 	$.ajax({
 		type: "POST",
@@ -11,55 +7,23 @@ function sendLineData() {
 		url: "/convert",
 		data: collectLineData.lineData(),
 		success: function(x){
-			alert(JSON.stringify(x))
+			//alert(JSON.stringify(x))
 		}
 	})
 
 }
 
-// en function som tar emot data fran python
-/*
-function callback(x){
-	prevDrawnLines = x;
-	alert("Previously drawn lines: " + JSON.stringify(prevDrawnLines))
-	return JSON.stringify(prevDrawnLines)
-
-}
-*/
-
+// recieve all lineData from Python
 
 function getLineData(callback) {
 	$.ajax({
 		datatype: "json",
 		url: "/hello",
 		success: callback
-
-
-
-/*
-
-		 function(x){
-			
-			prevDrawnLines = x;
-			alert("Previously drawn lines: " + JSON.stringify(prevDrawnLines))
-			callback(JSON.stringify(x));
-			//return JSON.stringify(prevDrawnLines)
-		}
-
-		*/
-
 	})
-
 }
 
-
-function callback(x){
-	return JSON.stringify(x)
-
-}
-
-//alert("outside of function" + JSON.stringify(prevDrawnLines));
-// class som sköter line features? typ farg och tjocklek
+// Handling line features, incease and decrease lineWidth
 
 class LineFeatures {
 
@@ -95,8 +59,7 @@ class LineFeatures {
 }
 
 
-
-// class som skapar nya ritade linjer nar du trycker
+// Drawing new lines upon mouse events
 
 class DrawNewLines {
 
@@ -107,7 +70,6 @@ class DrawNewLines {
 		this.line = this.canvas.getContext("2d");
 		this.line.lineWidth = lineFeatures.getLineWidth();
 		this.line.strokeStyle = lineFeatures.getStrokeStyle();
-		//this.linePositions = []
 		
 		this.canvas.addEventListener("mousedown", this.getCurrentLineFeatures.bind(this));
 		document.addEventListener("mousemove", this.currentCursorPosition.bind(this));
@@ -133,7 +95,7 @@ class DrawNewLines {
 	}
 
 	startDrawing(){
-		this.drawingLines = setInterval(this.drawAllPositions.bind(this), 1000);
+		this.drawingLines = setInterval(this.drawAllPositions.bind(this), 100);
 	}
 
 	drawAllPositions(){
@@ -148,7 +110,7 @@ class DrawNewLines {
 
 }
 
-// class som samlar lineData
+// Collecting lineData to send to backend based on mouse events
 
 class CollectLineData {
 
@@ -180,32 +142,25 @@ class CollectLineData {
 		
 		//////////////////////////////////////////////////////////////
 		document.addEventListener("mouseup", this.clearLinePositions.bind(this));
-
-
 	}
 
 	currentCursorPosition(e){
 		this.pos.x = e.clientX;
 		this.pos.y = e.clientY;
-
 	}
 
 	getCurrentLineFeatures(){
 		this.strokeStyle = lineFeatures.getStrokeStyle();
 		this.lineWidth = lineFeatures.getLineWidth();
-		
 	}
 
 
 	addBeginLinePosition(){
 		this.linePositions.push(this.pos.x, this.pos.y);
-
 	}
 
 	addAllPositions(){
-		this.allPositions = setInterval(this.pushLinePositions.bind(this), 1000)
-
-
+		this.allPositions = setInterval(this.pushLinePositions.bind(this), 100)
 	}
 
 	pushLinePositions(){
@@ -228,7 +183,6 @@ class CollectLineData {
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -240,7 +194,8 @@ $(function(){
 		document.getElementById("lineWidth").innerText = lineFeatures.getLineWidth();
 
 	}
-// class som ritar ut tidigare ritade linjer
+// Drawing existing lines recieved from backend
+
 class DrawExistingLines {
 
 	constructor(canvasID){
@@ -249,8 +204,6 @@ class DrawExistingLines {
 		this.line = this.canvas.getContext("2d");
 		this.line.lineWidth;
 		this.line.strokeStyle;
-		//this.allLines = allLines;
-		this.myTestLine = [{"lineWidth":5,"positions":[116,340,273,152,289,182],"strokeStyle":"black"},{"lineWidth":7,"positions":[93,56,263,309,304,79,118,288],"strokeStyle":"#ffff00"}];
 	}
 
 
@@ -274,8 +227,6 @@ class DrawExistingLines {
 	}
 
 	drawAllLines(allLines){
-		//this.allLines = JSON.stringify(allLines);
-		//alert("hejsna" + this.allLines);
 		var that = this;
 		allLines.forEach(function(x){
 			that.getLineFeatures(x);
@@ -289,32 +240,26 @@ class DrawExistingLines {
 }
 
 
-//alert(prevDrawnLines);
-//allLines = getLineData();
-//alert(allLines + "blablalbla")
-	//allLines.then(drawExistingLines.drawAllLines());
-	//alert(allLines);
-	var drawExistingLines = new DrawExistingLines("mycanvas")
-	//drawExistingLines.drawAllLines(allLines);
-	getLineData(response => drawExistingLines.drawAllLines(response))
+var drawExistingLines = new DrawExistingLines("mycanvas")
+getLineData(response => drawExistingLines.drawAllLines(response))
+
+
+lineFeatures = new LineFeatures();
+var drawNewLines = new DrawNewLines('mycanvas');
+collectLineData = new CollectLineData('mycanvas');
 
 
 
-
-
-
-	lineFeatures = new LineFeatures();
-	var drawNewLines = new DrawNewLines('mycanvas');
-	collectLineData = new CollectLineData('mycanvas');
-
-
-
-	showStrokeSize();
+showStrokeSize();
 
 
 ///////////////////////////////////////////////////////////////////
 /// Button functionality in HTML
 /// ///////////////////////////////////////////////////////////////
+
+$("#setColor-Yellow").click(function(){
+	lineFeatures.setStrokeStyle('yellow');
+});
 
 $("#setColor-Black").click(function(){
 	lineFeatures.setStrokeStyle('black');
