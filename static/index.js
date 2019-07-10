@@ -182,14 +182,6 @@ class CollectLineData {
 
 }
 
-
-//////////////////////////////////////////////////////////////////////////
-
-
-$(function(){
-
-
-
 // Drawing existing lines recieved from backend
 
 class DrawExistingLines {
@@ -235,6 +227,9 @@ class DrawExistingLines {
 
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+$(function(){
 
 var drawExistingLines = new DrawExistingLines("mycanvas")
 getLineData(response => drawExistingLines.drawAllLines(response))
