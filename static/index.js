@@ -7,6 +7,7 @@ function sendLineData() {
 		url: "/convert",
 		data: collectLineData.lineData(),
 		success: function(x){
+			console.log(JSON.stringify(x))
 			//alert(JSON.stringify(x))
 		}
 	})
@@ -18,6 +19,7 @@ function sendLineData() {
 function getLineData(callback) {
 	$.ajax({
 		datatype: "json",
+		cache: false,
 		url: "/hello",
 		success: callback
 	})
@@ -154,7 +156,6 @@ class CollectLineData {
 		this.lineWidth = lineFeatures.getLineWidth();
 	}
 
-
 	addBeginLinePosition(){
 		this.linePositions.push(this.pos.x, this.pos.y);
 	}
@@ -228,11 +229,37 @@ class DrawExistingLines {
 }
 
 
+
+
 //////////////////////////////////////////////////////////////////////////
 $(function(){
 
-var drawExistingLines = new DrawExistingLines("mycanvas")
-getLineData(response => drawExistingLines.drawAllLines(response))
+	var drawExistingLines = new DrawExistingLines("mycanvas")
+
+/*
+function drawLineData() {
+
+	this.drawLineData = setInterval(getLineData(response => drawExistingLines.drawAllLines(response)), 100);
+}
+*/
+
+//drawLineData();
+function checkForDrawnLines(){
+	function ficesecfunc(){
+		getLineData(response => drawExistingLines.drawAllLines(response));
+	}
+	
+
+	checkForLines = setInterval(ficesecfunc, 1000);
+}
+
+checkForDrawnLines();
+
+//$(document).ready(function(){
+// setInterval(getLineData(response => drawExistingLines.drawAllLines(response)), 5000);
+//});
+
+//getLineData(response => drawExistingLines.drawAllLines(response))
 
 
 lineFeatures = new LineFeatures();
