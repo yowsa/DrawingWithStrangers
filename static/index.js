@@ -7,7 +7,7 @@ function sendLineData() {
 		url: "/convert",
 		data: collectLineData.lineData(),
 		success: function(x){
-			console.log(JSON.stringify(x))
+			//console.log(JSON.stringify(x))
 			//alert(JSON.stringify(x))
 		}
 	})
@@ -61,33 +61,56 @@ class LineFeatures {
 }
 
 
+function setup(){
+	var canvasListener = new CanvasListener("mycanvas");
+	var lineFeatures = new LineFeatures();
+	var drawNewLines = new DrawNewLines("mycanvas", canvasListener, lineFeatures);
+	
+
+
+
+}
+
+
+
+
+
 // Drawing new lines upon mouse events
 
 class DrawNewLines {
 
-	constructor(canvasID){
+	constructor(canvasID, canvasListener, lineFeatures){
 		this.pos = {x: 0, y:0};
 		this.canvasID = canvasID;
+		this.lineFeatures = lineFeatures;
 		this.canvas = document.getElementById(this.canvasID);
 		this.line = this.canvas.getContext("2d");
 		this.line.lineWidth = lineFeatures.getLineWidth();
 		this.line.strokeStyle = lineFeatures.getStrokeStyle();
-		
+		this.isDrawing = false;
+		/*
 		this.canvas.addEventListener("mousedown", this.getCurrentLineFeatures.bind(this));
 		document.addEventListener("mousemove", this.currentCursorPosition.bind(this));
-		this.canvas.addEventListener("mousedown", this.setBeginLinePosition.bind(this));
-		this.canvas.addEventListener("mousedown", this.startDrawing.bind(this));
+		this.canvas.addEventListener("mousedown", this.setIsDrawing.bind(this));
+		this.canvas.addEventListener("mousemove", this.drawAllPositions.bind(this));
 		document.addEventListener("mouseup", this.finishDrawing.bind(this));
+		*/
+		this.positions = [];
+		canvasListener.addLineListener(this.newPosInLine.bind(this))
 	}
-
+/*
 	currentCursorPosition(e){
 		this.pos.x = e.clientX;
 		this.pos.y = e.clientY;
 	}
 
+	setIsDrawing(){
+		this.isDrawing = true;
+	}
+
 	setBeginLinePosition() {
-		this.line.beginPath();
-		this.line.moveTo(this.pos.x, this.pos.y);
+		
+
 	}
 
 	getCurrentLineFeatures(){
@@ -95,22 +118,150 @@ class DrawNewLines {
 		this.line.lineWidth = lineFeatures.getLineWidth();
 		
 	}
+	*/
+/*
+	checkPixelDifference(posx, posy){
+		return Math.abs(this.positions[0] - posx) + Math.abs(this.positions[1] - posy)
+	}
 
+	*/
+	newPosInLine(e){
+
+		if (e.newLine){
+			this.line.lineWidth = this.lineFeatures.getLineWidth();
+			this.line.strokeStyle = this.lineFeatures.getStrokeStyle();
+			this.line.beginPath();
+			this.line.moveTo(e.x, e.y);
+		} else {
+			this.line.lineTo(e.x, e.y);
+			this.line.stroke();
+		}
+
+
+	}
+
+/*
 	startDrawing(){
 		this.drawingLines = setInterval(this.drawAllPositions.bind(this), 100);
 	}
-
+	*/
+	/*
 	drawAllPositions(){
-		this.line.lineTo(this.pos.x, this.pos.y);
-		this.line.stroke();
+		if (!this.isDrawing)
+		{
+			return;
+		}
+
+		this.line.beginPath();
+		this.line.moveTo(this.pos.x, this.pos.y);
+		this.positions.push(this.pos.x, this.pos.y);
+		console.log(this.positions)
+		console.log(Math.abs(this.positions[0]), Math.abs(this.positions[1]))
+		console.log(Math.abs(this.pos.x), this.pos.y)
+		console.log(this.checkPixelDifference(this.pos.x, this.pos.y))
+
+		if (this.checkPixelDifference(this.pos.x, this.pos.y) > 20){
+			this.line.lineTo(this.pos.x, this.pos.y);
+			this.line.stroke();
+			this.positions = [this.pos.x, this.pos.y]
+			console.log('hej')
+
+		}
+
+
+
+		//console.log(this.positions)
+		//this.line.lineTo(this.pos.x, this.pos.y);
+		//this.line.stroke();
 	}
+
 
 	finishDrawing(){
-		clearInterval(this.drawingLines);
+		this.isDrawing = false;
+		//clearInterval(this.drawingLines);
+
+	}*/
+
+}
+
+class CanvasListener {
+
+	constructor(canvasID){
+		this.canvasID = canvasID;
+		this.canvas = document.getElementById(this.canvasID);
+		this.isMouseDown = false;
+		this.positions = [];
+		//this.canvas.addEventListener("mousedown", this.getCurrentLineFeatures.bind(this));
+		this.canvas.addEventListener("mousedown", this.setMouseDown.bind(this));
+		this.canvas.addEventListener("mousedown", this.setBeginLinePosition.bind(this));
+		this.canvas.addEventListener("mousemove", this.saveCanvasPositions.bind(this));
+		document.addEventListener("mouseup", this.setNotMouseDown.bind(this));
+		this.callbacks = [];
 
 	}
 
+	setMouseDown(){
+		this.isMouseDown = true;
+	}
+
+	setNotMouseDown(){
+		this.isMouseDown = false;
+	}
+/*
+	getCurrentLineFeatures(){
+		this.strokeStyle = lineFeatures.getStrokeStyle();
+		this.lineWidth = lineFeatures.getLineWidth();
+	}
+	*/
+	setBeginLinePosition(e) {
+		this.positions.push(e.clientX, e.clientY);
+		this.sendCallbacks(e.clientX, e.clientY, true);
+
+	}
+
+	sendCallbacks(x, y, newLine){
+		this.callbacks.forEach(function(callback){
+			callback({
+				x : x,
+				y : y,
+				newLine : newLine,
+			});
+		})
+
+	}
+
+	checkPixelDifference(posx, posy){
+		return Math.abs(this.positions[0] - posx) + Math.abs(this.positions[1] - posy)
+	}
+
+
+	saveCanvasPositions(e){
+		if (!this.isMouseDown){
+			return;
+		}
+		if (this.checkPixelDifference(e.clientX, e.clientY) > 20){
+			this.positions = [e.clientX, e.clientY]
+			this.sendCallbacks(e.clientX, e.clientY, false);
+
+
+		}
+
+	}
+
+	addLineListener(callback){
+		this.callbacks.push(callback);
+	}
+
+
 }
+
+
+
+
+
+
+
+
 
 // Collecting lineData to send to backend based on mouse events
 
@@ -128,7 +279,7 @@ class CollectLineData {
 
 
 		document.addEventListener("mousemove", this.currentCursorPosition.bind(this));
-		this.canvas.addEventListener("mousedown", this.getCurrentLineFeatures.bind(this));
+		
 		this.canvas.addEventListener("mousedown", this.addBeginLinePosition.bind(this));
 		this.canvas.addEventListener("mousedown", this.addAllPositions.bind(this));
 
@@ -136,12 +287,14 @@ class CollectLineData {
 		document.addEventListener("mouseup", this.lineData.bind(this));
 		//////////////////////////////////////////////////////////////
 		//TODO: Update the below event sendlinedata to seperate function/class ass this is a colleclinedata class, be aware of the clearLinePositions function
-		document.addEventListener("mouseup", function(){
+		/*document.addEventListener("mousemove", function(){
 			if (that.linePositions.length >= 4){
 				sendLineData();
+				that.linePositions.shift();
+				that.linePositions.shift();
 			}
 		}); 
-		
+		*/
 		//////////////////////////////////////////////////////////////
 		document.addEventListener("mouseup", this.clearLinePositions.bind(this));
 	}
@@ -151,10 +304,7 @@ class CollectLineData {
 		this.pos.y = e.clientY;
 	}
 
-	getCurrentLineFeatures(){
-		this.strokeStyle = lineFeatures.getStrokeStyle();
-		this.lineWidth = lineFeatures.getLineWidth();
-	}
+
 
 	addBeginLinePosition(){
 		this.linePositions.push(this.pos.x, this.pos.y);
@@ -175,7 +325,7 @@ class CollectLineData {
 	lineData() {
 		var lineData = JSON.stringify({"strokeStyle" : this.strokeStyle, "lineWidth" : this.lineWidth, 'positions' : this.linePositions})
 		return lineData
-	}
+	} 
 
 	clearLinePositions(){
 		this.linePositions = []
@@ -230,9 +380,18 @@ class DrawExistingLines {
 
 
 
+function drawExistingAndNewLines(){}
+
+
+
+
+
+
 
 //////////////////////////////////////////////////////////////////////////
 $(function(){
+
+	setup();
 
 	var drawExistingLines = new DrawExistingLines("mycanvas")
 
@@ -255,30 +414,24 @@ function checkForDrawnLines(){
 
 checkForDrawnLines();
 
-//$(document).ready(function(){
-// setInterval(getLineData(response => drawExistingLines.drawAllLines(response)), 5000);
-//});
 
-//getLineData(response => drawExistingLines.drawAllLines(response))
-
-
-lineFeatures = new LineFeatures();
-var drawNewLines = new DrawNewLines('mycanvas');
-collectLineData = new CollectLineData('mycanvas');
+//lineFeatures = new LineFeatures();
+//var drawNewLines = new DrawNewLines('mycanvas');
+//collectLineData = new CollectLineData('mycanvas');
 
 
 
-showStrokeSize();
+//showStrokeSize();
 
 
 ///////////////////////////////////////////////////////////////////
 /// Button functionality and visuals in HTML
 /// ///////////////////////////////////////////////////////////////
-
+/*
 function showStrokeSize() {
 	document.getElementById("lineWidth").innerText = lineFeatures.getLineWidth();
 }
-
+*/
 
 $("#setColor-Yellow").click(function(){
 	lineFeatures.setStrokeStyle('yellow');
