@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 #draw.addLine
 #draw.getLines()
-class DrawReceiver:
+class LineReceiver:
     
     def __init__(self):
         self.drawnLinesData = []
@@ -13,7 +13,17 @@ class DrawReceiver:
     #{"color":"black","positions":"[5,6]","strokeWidth":"5"}
 
     def addLine(self, info):
-        self.drawnLinesData.append(info)
+        if len(self.drawnLinesData) == 0:
+            self.drawnLinesData.append(info)
+        else:
+            for line in self.drawnLinesData:
+                if info["lineNo"] == line["lineNo"]:
+                    line["positions"] = info["positions"]
+                    print self.drawnLinesData
+                else:
+                    self.drawnLinesData.append(info)
+                    print self.drawnLinesData
+        
 
 
     def getLines(self):
@@ -22,7 +32,7 @@ class DrawReceiver:
 
 
 
-draws = DrawReceiver()
+lines = LineReceiver()
 
 
 
@@ -31,7 +41,7 @@ draws = DrawReceiver()
 def convert():
 
     info = request.get_json()
-    draws.addLine(info)
+    lines.addLine(info)
     return jsonify(info)
 
 
@@ -39,7 +49,7 @@ def convert():
 def linesToJs():
 
     info = request.get_json()
-    draws.getLines(info)
+    lines.getLines(info)
 
     return jsonify(info)
 
@@ -51,8 +61,8 @@ def hello_world():
     #result = "results"
     #value = request.args.get('name')
     # stufa om data\
-    # kalla pa draws.addLines(stufadData)
-    return jsonify(draws.getLines())
+    # kalla pa lines.addLines(stufadData)
+    return jsonify(lines.getLines())
 
 
 

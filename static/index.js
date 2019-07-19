@@ -1,12 +1,6 @@
 
 class ServerTalker{
 
-	constructor(lineDataCollector){
-
-
-
-	}
-
 	sendLineData(lineData) {
 		$.ajax({
 			type: "POST",
@@ -15,10 +9,8 @@ class ServerTalker{
 			url: "/convert",
 			data: JSON.stringify(lineData),
 			success: function(x){
-				console.log(JSON.stringify(x))
-			//alert(JSON.stringify(x))
-		}
-	});
+				console.log(JSON.stringify(x));}
+			});
 
 	}
 
@@ -129,7 +121,6 @@ class DrawNewLines {
 	}
 
 	newPosInLine(e){
-
 		if (e.newLine){
 			this.line.lineWidth = this.lineFeatures.getLineWidth();
 			this.line.strokeStyle = this.lineFeatures.getStrokeStyle();
