@@ -1,29 +1,42 @@
-// send new lineData to Python
-function sendLineData() {
-	$.ajax({
-		type: "POST",
-		dataType: "json",
-		contentType: "application/json",
-		url: "/convert",
-		data: collectLineData.lineData(),
-		success: function(x){
-			//console.log(JSON.stringify(x))
+
+class ServerTalker{
+
+	constructor(lineDataCollector){
+
+
+
+	}
+
+	sendLineData(lineData) {
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			contentType: "application/json",
+			url: "/convert",
+			data: JSON.stringify(lineData),
+			success: function(x){
+				console.log(JSON.stringify(x))
 			//alert(JSON.stringify(x))
 		}
 	});
 
+	}
+
+	getLineData(callback) {
+		$.ajax({
+			datatype: "json",
+			cache: false,
+			url: "/hello",
+			success: callback
+		});
+	}
+
+
 }
 
-// recieve all lineData from Python
 
-function getLineData(callback) {
-	$.ajax({
-		datatype: "json",
-		cache: false,
-		url: "/hello",
-		success: callback
-	});
-}
+
+
 
 // Handling line features, incease and decrease lineWidth
 
@@ -86,15 +99,6 @@ class LineFeatures {
 		return this.lineWidth;
 	}
 
-	showStrokeSize(){
-
-
-
-
-
-	}
-
-
 }
 
 
@@ -102,17 +106,13 @@ function setup(){
 	var canvasListener = new CanvasListener("mycanvas");
 	var lineFeatures = new LineFeatures();
 	var drawNewLines = new DrawNewLines("mycanvas", canvasListener, lineFeatures);
-	
-
+	var serverTalker = new ServerTalker();
+	var lineDataCollector = new LineDataCollector(canvasListener, lineFeatures, serverTalker);
 
 
 }
 
 
-
-
-
-// Drawing new lines upon mouse events
 
 class DrawNewLines {
 
@@ -144,6 +144,8 @@ class DrawNewLines {
 	}
 
 }
+
+
 
 class CanvasListener {
 
@@ -213,81 +215,41 @@ class CanvasListener {
 
 
 
+class LineDataCollector {
 
-
-
-
-
-
-// Collecting lineData to send to backend based on mouse events
-
-class CollectLineData {
-
-	constructor(canvasID){
-		this.pos= {x: 0 , y: 0 };
-		this.canvasID = canvasID;
-		this.canvas = document.getElementById(this.canvasID);
-
-		this.lineWidth = lineFeatures.getLineWidth();
-		this.strokeStyle = lineFeatures.getStrokeStyle();
-		this.linePositions = [];
+	constructor(canvasListener, lineFeatures, serverTalker){
+		this.lineFeatures = lineFeatures;
+		//this.lineWidth = lineFeatures.getLineWidth();
+		//this.strokeStyle = lineFeatures.getStrokeStyle();
+		this.lineData = {"lineNo" : "", "strokeStyle" : "", "lineWidth" : "", 'positions' : []};
 		var that = this;
+		this.serverTalker = serverTalker;
 
-
-		document.addEventListener("mousemove", this.currentCursorPosition.bind(this));
-		
-		this.canvas.addEventListener("mousedown", this.addBeginLinePosition.bind(this));
-		this.canvas.addEventListener("mousedown", this.addAllPositions.bind(this));
-
-		document.addEventListener("mouseup", this.stopAddingPositions.bind(this));
-		document.addEventListener("mouseup", this.lineData.bind(this));
-		//////////////////////////////////////////////////////////////
-		//TODO: Update the below event sendlinedata to seperate function/class ass this is a colleclinedata class, be aware of the clearLinePositions function
-		/*document.addEventListener("mousemove", function(){
-			if (that.linePositions.length >= 4){
-				sendLineData();
-				that.linePositions.shift();
-				that.linePositions.shift();
-			}
-		}); 
-		*/
-		//////////////////////////////////////////////////////////////
-		document.addEventListener("mouseup", this.clearLinePositions.bind(this));
+		canvasListener.addLineListener(this.lineDataFromCallback.bind(this));
 	}
 
-	currentCursorPosition(e){
-		this.pos.x = e.clientX;
-		this.pos.y = e.clientY;
-	}
+	lineDataFromCallback(e){
+		if (e.newLine){
+			this.lineData.lineNo = Math.random();
+			this.lineData.strokeStyle = this.lineFeatures.getStrokeStyle();
+			this.lineData.lineWidth = this.lineFeatures.getLineWidth();
+			this.lineData.positions = [e.x, e.y];
+
+		} else if (this.lineData.positions.length < 8) {
+			this.lineData.positions.push(e.x, e.y);
+
+		} else {
+			this.lineData.positions.push(e.x, e.y);
+			this.serverTalker.sendLineData(this.lineData);
+			this.lineData.positions.splice(0, 6);
 
 
+		}
 
-	addBeginLinePosition(){
-		this.linePositions.push(this.pos.x, this.pos.y);
-	}
-
-	addAllPositions(){
-		this.allPositions = setInterval(this.pushLinePositions.bind(this), 100)
-	}
-
-	pushLinePositions(){
-		this.linePositions.push(this.pos.x, this.pos.y);
-	}
-
-	stopAddingPositions(){
-		clearInterval(this.allPositions);
-	}
-
-	lineData() {
-		var lineData = JSON.stringify({"strokeStyle" : this.strokeStyle, "lineWidth" : this.lineWidth, 'positions' : this.linePositions})
-		return lineData
-	} 
-
-	clearLinePositions(){
-		this.linePositions = [];
 	}
 
 }
+
 
 // Drawing existing lines recieved from backend
 
@@ -340,26 +302,25 @@ function drawExistingAndNewLines(){}
 
 
 
-
-
 $(function(){
 
 	setup();
 
 	var drawExistingLines = new DrawExistingLines("mycanvas");
 
+/*
+	function checkForDrawnLines(){
+		function ficesecfunc(){
+			getLineData(response => drawExistingLines.drawAllLines(response));
+		}
 
-function checkForDrawnLines(){
-	function ficesecfunc(){
-		getLineData(response => drawExistingLines.drawAllLines(response));
+
+		checkForLines = setInterval(ficesecfunc, 1000);
 	}
-	
 
-	checkForLines = setInterval(ficesecfunc, 1000);
-}
+	checkForDrawnLines();
 
-checkForDrawnLines();
-
+*/
 
 
 
