@@ -219,12 +219,9 @@ class LineDataCollector {
 
 	constructor(canvasListener, lineFeatures, serverTalker){
 		this.lineFeatures = lineFeatures;
-		//this.lineWidth = lineFeatures.getLineWidth();
-		//this.strokeStyle = lineFeatures.getStrokeStyle();
+		this.serverTalker = serverTalker;
 		this.lineData = {"lineNo" : "", "strokeStyle" : "", "lineWidth" : "", 'positions' : []};
 		var that = this;
-		this.serverTalker = serverTalker;
-
 		canvasListener.addLineListener(this.lineDataFromCallback.bind(this));
 	}
 
@@ -234,16 +231,9 @@ class LineDataCollector {
 			this.lineData.strokeStyle = this.lineFeatures.getStrokeStyle();
 			this.lineData.lineWidth = this.lineFeatures.getLineWidth();
 			this.lineData.positions = [e.x, e.y];
-
-		} else if (this.lineData.positions.length < 8) {
-			this.lineData.positions.push(e.x, e.y);
-
 		} else {
 			this.lineData.positions.push(e.x, e.y);
 			this.serverTalker.sendLineData(this.lineData);
-			this.lineData.positions.splice(0, 6);
-
-
 		}
 
 	}
@@ -320,7 +310,7 @@ $(function(){
 
 	checkForDrawnLines();
 
-*/
+	*/
 
 
 
