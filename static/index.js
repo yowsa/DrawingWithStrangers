@@ -10,7 +10,7 @@ function sendLineData() {
 			//console.log(JSON.stringify(x))
 			//alert(JSON.stringify(x))
 		}
-	})
+	});
 
 }
 
@@ -22,7 +22,7 @@ function getLineData(callback) {
 		cache: false,
 		url: "/hello",
 		success: callback
-	})
+	});
 }
 
 // Handling line features, incease and decrease lineWidth
@@ -31,7 +31,35 @@ class LineFeatures {
 
 	constructor(){
 		this.strokeStyle = "#ffff00";
-		this.lineWidth = 5;
+		this.lineWidth = 15;
+		var that = this;
+		document.getElementById("lineWidth").innerText = this.getLineWidth();
+
+		$("#setColor-Yellow").click(function(){
+			that.setStrokeStyle('yellow');
+		});
+
+		$("#setColor-Black").click(function(){
+			that.setStrokeStyle('black');
+		});
+
+		$("#setColor-Red").click(function(){
+			that.setStrokeStyle('red');
+		});
+
+		$("#setColor-Green").click(function(){
+			that.setStrokeStyle('green');
+		});
+
+		$("#increaseLineWidth").click(function(){
+			that.increaseLineWidth();
+			document.getElementById("lineWidth").innerText = that.getLineWidth();
+		});
+
+		$("#decreaseLineWidth").click(function(){
+			that.decreaseLineWidth();
+			document.getElementById("lineWidth").innerText = that.getLineWidth();
+		});
 	}
 
 	setStrokeStyle(strokeStyle){
@@ -58,6 +86,15 @@ class LineFeatures {
 		return this.lineWidth;
 	}
 
+	showStrokeSize(){
+
+
+
+
+
+	}
+
+
 }
 
 
@@ -80,51 +117,17 @@ function setup(){
 class DrawNewLines {
 
 	constructor(canvasID, canvasListener, lineFeatures){
-		this.pos = {x: 0, y:0};
+
 		this.canvasID = canvasID;
 		this.lineFeatures = lineFeatures;
 		this.canvas = document.getElementById(this.canvasID);
 		this.line = this.canvas.getContext("2d");
-		this.line.lineWidth = lineFeatures.getLineWidth();
-		this.line.strokeStyle = lineFeatures.getStrokeStyle();
-		this.isDrawing = false;
-		/*
-		this.canvas.addEventListener("mousedown", this.getCurrentLineFeatures.bind(this));
-		document.addEventListener("mousemove", this.currentCursorPosition.bind(this));
-		this.canvas.addEventListener("mousedown", this.setIsDrawing.bind(this));
-		this.canvas.addEventListener("mousemove", this.drawAllPositions.bind(this));
-		document.addEventListener("mouseup", this.finishDrawing.bind(this));
-		*/
-		this.positions = [];
-		canvasListener.addLineListener(this.newPosInLine.bind(this))
-	}
-/*
-	currentCursorPosition(e){
-		this.pos.x = e.clientX;
-		this.pos.y = e.clientY;
+		//this.line.lineWidth;
+		//this.line.strokeStyle;
+
+		canvasListener.addLineListener(this.newPosInLine.bind(this));
 	}
 
-	setIsDrawing(){
-		this.isDrawing = true;
-	}
-
-	setBeginLinePosition() {
-		
-
-	}
-
-	getCurrentLineFeatures(){
-		this.line.strokeStyle = lineFeatures.getStrokeStyle();
-		this.line.lineWidth = lineFeatures.getLineWidth();
-		
-	}
-	*/
-/*
-	checkPixelDifference(posx, posy){
-		return Math.abs(this.positions[0] - posx) + Math.abs(this.positions[1] - posy)
-	}
-
-	*/
 	newPosInLine(e){
 
 		if (e.newLine){
@@ -140,48 +143,6 @@ class DrawNewLines {
 
 	}
 
-/*
-	startDrawing(){
-		this.drawingLines = setInterval(this.drawAllPositions.bind(this), 100);
-	}
-	*/
-	/*
-	drawAllPositions(){
-		if (!this.isDrawing)
-		{
-			return;
-		}
-
-		this.line.beginPath();
-		this.line.moveTo(this.pos.x, this.pos.y);
-		this.positions.push(this.pos.x, this.pos.y);
-		console.log(this.positions)
-		console.log(Math.abs(this.positions[0]), Math.abs(this.positions[1]))
-		console.log(Math.abs(this.pos.x), this.pos.y)
-		console.log(this.checkPixelDifference(this.pos.x, this.pos.y))
-
-		if (this.checkPixelDifference(this.pos.x, this.pos.y) > 20){
-			this.line.lineTo(this.pos.x, this.pos.y);
-			this.line.stroke();
-			this.positions = [this.pos.x, this.pos.y]
-			console.log('hej')
-
-		}
-
-
-
-		//console.log(this.positions)
-		//this.line.lineTo(this.pos.x, this.pos.y);
-		//this.line.stroke();
-	}
-
-
-	finishDrawing(){
-		this.isDrawing = false;
-		//clearInterval(this.drawingLines);
-
-	}*/
-
 }
 
 class CanvasListener {
@@ -191,12 +152,12 @@ class CanvasListener {
 		this.canvas = document.getElementById(this.canvasID);
 		this.isMouseDown = false;
 		this.positions = [];
-		//this.canvas.addEventListener("mousedown", this.getCurrentLineFeatures.bind(this));
+		this.callbacks = [];
+
 		this.canvas.addEventListener("mousedown", this.setMouseDown.bind(this));
 		this.canvas.addEventListener("mousedown", this.setBeginLinePosition.bind(this));
 		this.canvas.addEventListener("mousemove", this.saveCanvasPositions.bind(this));
 		document.addEventListener("mouseup", this.setNotMouseDown.bind(this));
-		this.callbacks = [];
 
 	}
 
@@ -207,12 +168,7 @@ class CanvasListener {
 	setNotMouseDown(){
 		this.isMouseDown = false;
 	}
-/*
-	getCurrentLineFeatures(){
-		this.strokeStyle = lineFeatures.getStrokeStyle();
-		this.lineWidth = lineFeatures.getLineWidth();
-	}
-	*/
+
 	setBeginLinePosition(e) {
 		this.positions.push(e.clientX, e.clientY);
 		this.sendCallbacks(e.clientX, e.clientY, true);
@@ -226,12 +182,12 @@ class CanvasListener {
 				y : y,
 				newLine : newLine,
 			});
-		})
+		});
 
 	}
 
 	checkPixelDifference(posx, posy){
-		return Math.abs(this.positions[0] - posx) + Math.abs(this.positions[1] - posy)
+		return Math.abs(this.positions[0] - posx) + Math.abs(this.positions[1] - posy);
 	}
 
 
@@ -239,8 +195,8 @@ class CanvasListener {
 		if (!this.isMouseDown){
 			return;
 		}
-		if (this.checkPixelDifference(e.clientX, e.clientY) > 20){
-			this.positions = [e.clientX, e.clientY]
+		if (this.checkPixelDifference(e.clientX, e.clientY) > 100){
+			this.positions = [e.clientX, e.clientY];
 			this.sendCallbacks(e.clientX, e.clientY, false);
 
 
@@ -268,7 +224,7 @@ class CanvasListener {
 class CollectLineData {
 
 	constructor(canvasID){
-		this.pos= {x: 0 , y: 0 }
+		this.pos= {x: 0 , y: 0 };
 		this.canvasID = canvasID;
 		this.canvas = document.getElementById(this.canvasID);
 
@@ -328,7 +284,7 @@ class CollectLineData {
 	} 
 
 	clearLinePositions(){
-		this.linePositions = []
+		this.linePositions = [];
 	}
 
 }
@@ -386,23 +342,13 @@ function drawExistingAndNewLines(){}
 
 
 
-
-
-//////////////////////////////////////////////////////////////////////////
 $(function(){
 
 	setup();
 
-	var drawExistingLines = new DrawExistingLines("mycanvas")
+	var drawExistingLines = new DrawExistingLines("mycanvas");
 
-/*
-function drawLineData() {
 
-	this.drawLineData = setInterval(getLineData(response => drawExistingLines.drawAllLines(response)), 100);
-}
-*/
-
-//drawLineData();
 function checkForDrawnLines(){
 	function ficesecfunc(){
 		getLineData(response => drawExistingLines.drawAllLines(response));
@@ -415,50 +361,8 @@ function checkForDrawnLines(){
 checkForDrawnLines();
 
 
-//lineFeatures = new LineFeatures();
-//var drawNewLines = new DrawNewLines('mycanvas');
-//collectLineData = new CollectLineData('mycanvas');
 
 
-
-//showStrokeSize();
-
-
-///////////////////////////////////////////////////////////////////
-/// Button functionality and visuals in HTML
-/// ///////////////////////////////////////////////////////////////
-/*
-function showStrokeSize() {
-	document.getElementById("lineWidth").innerText = lineFeatures.getLineWidth();
-}
-*/
-
-$("#setColor-Yellow").click(function(){
-	lineFeatures.setStrokeStyle('yellow');
-});
-
-$("#setColor-Black").click(function(){
-	lineFeatures.setStrokeStyle('black');
-});
-
-$("#setColor-Red").click(function(){
-	lineFeatures.setStrokeStyle('red');
-});
-
-$("#setColor-Green").click(function(){
-	lineFeatures.setStrokeStyle('green');
-});
-
-
-$("#increaseLineWidth").click(function(){
-	lineFeatures.increaseLineWidth();
-	showStrokeSize();
-});
-
-$("#decreaseLineWidth").click(function(){
-	lineFeatures.decreaseLineWidth();
-	showStrokeSize();
-});
 
 
 });
