@@ -114,8 +114,6 @@ class DrawNewLines {
 		this.lineFeatures = lineFeatures;
 		this.canvas = document.getElementById(this.canvasID);
 		this.line = this.canvas.getContext("2d");
-		//this.line.lineWidth;
-		//this.line.strokeStyle;
 
 		canvasListener.addLineListener(this.newPosInLine.bind(this));
 	}
@@ -158,9 +156,14 @@ class CanvasListener {
 		this.isMouseDown = true;
 	}
 
-	setNotMouseDown(){
-		this.isMouseDown = false;
+	setNotMouseDown(e){
+		if (this.isMouseDown){
+			this.sendCallbacks(e.clientX, e.clientY, false);
+			this.isMouseDown = false;
+		}
 	}
+
+
 
 	setBeginLinePosition(e) {
 		this.positions.push(e.clientX, e.clientY);
@@ -212,7 +215,7 @@ class LineDataCollector {
 		this.lineFeatures = lineFeatures;
 		this.serverTalker = serverTalker;
 		this.lineData = {"lineNo" : "", "strokeStyle" : "", "lineWidth" : "", 'positions' : []};
-		var that = this;
+		//var that = this;
 		canvasListener.addLineListener(this.lineDataFromCallback.bind(this));
 	}
 

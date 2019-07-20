@@ -10,20 +10,16 @@ class LineReceiver:
     def __init__(self):
         self.drawnLinesData = []
 
-    #{"color":"black","positions":"[5,6]","strokeWidth":"5"}
+    #{"color":"black","positions":"[5,6]","strokeWidth":"5
 
-    def addLine(self, info):
-        if len(self.drawnLinesData) == 0:
-            self.drawnLinesData.append(info)
-        else:
-            for line in self.drawnLinesData:
-                if info["lineNo"] == line["lineNo"]:
-                    line["positions"] = info["positions"]
-                    print self.drawnLinesData
-                else:
-                    self.drawnLinesData.append(info)
-                    print self.drawnLinesData
-        
+
+    def addLine(self, lineData):
+        for lineDict in self.drawnLinesData:
+            if lineData["lineNo"] == lineDict["lineNo"]:
+                lineDict.update(lineData)
+                return
+
+        self.drawnLinesData.append(lineData)
 
 
     def getLines(self):
