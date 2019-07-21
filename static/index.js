@@ -1,6 +1,11 @@
 
 class ServerTalker{
 
+	constructor() {
+		setInterval(this.checkForDrawnLines.bind(this), 100);
+		this.allLines = [];
+	}
+
 	sendLineData(lineData) {
 		$.ajax({
 			type: "POST",
@@ -22,6 +27,23 @@ class ServerTalker{
 			success: callback
 		});
 	}
+
+
+
+	checkForDrawnLines(){
+		var that = this;
+		this.getLineData(response => that.allLines = response);
+	}
+
+
+	latestDrawnLines() {
+
+		return this.allLines;
+
+	}
+
+
+
 
 
 }
@@ -97,9 +119,10 @@ class LineFeatures {
 function setup(){
 	var canvasListener = new CanvasListener("mycanvas");
 	var lineFeatures = new LineFeatures();
-	var drawNewLines = new DrawNewLines("mycanvas", canvasListener, lineFeatures);
+	//var drawNewLines = new DrawNewLines("mycanvas", canvasListener, lineFeatures);
 	var serverTalker = new ServerTalker();
 	var lineDataCollector = new LineDataCollector(canvasListener, lineFeatures, serverTalker);
+	var lineDrawer = new LineDrawer("mycanvas", lineDataCollector, serverTalker)
 
 
 }
@@ -191,7 +214,7 @@ class CanvasListener {
 		if (!this.isMouseDown){
 			return;
 		}
-		if (this.checkPixelDifference(e.clientX, e.clientY) > 100){
+		if (this.checkPixelDifference(e.clientX, e.clientY) > 10){
 			this.positions = [e.clientX, e.clientY];
 			this.sendCallbacks(e.clientX, e.clientY, false);
 
@@ -207,33 +230,87 @@ class CanvasListener {
 
 }
 
+class LineDrawer{
+
+	constructor(canvasID, lineDataCollector, serverTalker) {
+		this.canvasID = canvasID;
+		this.canvas = document.getElementById(this.canvasID);
+		this.line = this.canvas.getContext("2d");
+
+		this.lineDataCollector = lineDataCollector;
+		this.serverTalker = serverTalker;
+		setInterval(this.drawAllLines.bind(this), 100);
+	}
+
+
+	drawLine(lineData) {
+		this.line.lineWidth = lineData.lineWidth;
+		this.line.strokeStyle = lineData.strokeStyle;
+		this.line.beginPath();
+		this.line.moveTo(lineData.positions[0], lineData.positions[1]);
+		for (var posPair = 2; posPair < lineData.positions.length; posPair += 2){
+			this.line.lineTo(lineData.positions[posPair], lineData.positions[posPair+1]);
+		}
+		this.line.stroke();
+
+
+	}
+
+
+	drawAllLines() {
+		var that = this;
+		this.serverTalker.latestDrawnLines().forEach(function(lineData){
+			that.drawLine(lineData);
+		});
+
+
+
+		this.drawLine(this.lineDataCollector.getLineData());
+
+
+
+	}
+
+
+}
+
+
 
 
 class LineDataCollector {
 
-	constructor(canvasListener, lineFeatures, serverTalker){
+	constructor(canvasListener, lineFeatures, serverTalker) {
 		this.lineFeatures = lineFeatures;
 		this.serverTalker = serverTalker;
-		this.lineData = {"lineNo" : "", "strokeStyle" : "", "lineWidth" : "", 'positions' : []};
-		//var that = this;
+		this.startNewLine();
 		canvasListener.addLineListener(this.lineDataFromCallback.bind(this));
+	}
+
+	startNewLine(){
+		this.lineData = {};
+		this.lineData.lineNo = Math.random();
+		this.lineData.strokeStyle = this.lineFeatures.getStrokeStyle();
+		this.lineData.lineWidth = this.lineFeatures.getLineWidth();
+		this.lineData.positions = [];
 	}
 
 	lineDataFromCallback(e){
 		if (e.newLine){
-			this.lineData.lineNo = Math.random();
-			this.lineData.strokeStyle = this.lineFeatures.getStrokeStyle();
-			this.lineData.lineWidth = this.lineFeatures.getLineWidth();
-			this.lineData.positions = [e.x, e.y];
-		} else {
-			this.lineData.positions.push(e.x, e.y);
-			this.serverTalker.sendLineData(this.lineData);
+			this.startNewLine();
 		}
 
+		this.lineData.positions.push(e.x, e.y);
+		this.serverTalker.sendLineData(this.lineData);
+
+	}
+
+	getLineData(){
+		return this.lineData;
 	}
 
 }
 
+/*
 
 // Drawing existing lines recieved from backend
 
@@ -279,10 +356,7 @@ class DrawExistingLines {
 	}
 
 }
-
-
-
-function drawExistingAndNewLines(){}
+*/
 
 
 
@@ -290,21 +364,13 @@ $(function(){
 
 	setup();
 
-	var drawExistingLines = new DrawExistingLines("mycanvas");
-
-/*
-	function checkForDrawnLines(){
-		function ficesecfunc(){
-			getLineData(response => drawExistingLines.drawAllLines(response));
-		}
+	//var drawExistingLines = new DrawExistingLines("mycanvas");
 
 
-		checkForLines = setInterval(ficesecfunc, 1000);
-	}
 
-	checkForDrawnLines();
+	//checkForDrawnLines();
 
-	*/
+
 
 
 
