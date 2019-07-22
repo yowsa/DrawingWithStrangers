@@ -14,7 +14,8 @@ class ServerTalker{
 			url: "/convert",
 			data: JSON.stringify(lineData),
 			success: function(x){
-				console.log(JSON.stringify(x));}
+				//console.log(JSON.stringify(x));
+			}
 			});
 
 	}
@@ -29,7 +30,6 @@ class ServerTalker{
 	}
 
 
-
 	checkForDrawnLines(){
 		var that = this;
 		this.getLineData(response => that.allLines = response);
@@ -37,22 +37,13 @@ class ServerTalker{
 
 
 	latestDrawnLines() {
-
 		return this.allLines;
-
 	}
-
-
-
 
 
 }
 
 
-
-
-
-// Handling line features, incease and decrease lineWidth
 
 class LineFeatures {
 
@@ -119,7 +110,6 @@ class LineFeatures {
 function setup(){
 	var canvasListener = new CanvasListener("mycanvas");
 	var lineFeatures = new LineFeatures();
-	//var drawNewLines = new DrawNewLines("mycanvas", canvasListener, lineFeatures);
 	var serverTalker = new ServerTalker();
 	var lineDataCollector = new LineDataCollector(canvasListener, lineFeatures, serverTalker);
 	var lineDrawer = new LineDrawer("mycanvas", lineDataCollector, serverTalker)
@@ -127,35 +117,6 @@ function setup(){
 
 }
 
-
-
-class DrawNewLines {
-
-	constructor(canvasID, canvasListener, lineFeatures){
-
-		this.canvasID = canvasID;
-		this.lineFeatures = lineFeatures;
-		this.canvas = document.getElementById(this.canvasID);
-		this.line = this.canvas.getContext("2d");
-
-		canvasListener.addLineListener(this.newPosInLine.bind(this));
-	}
-
-	newPosInLine(e){
-		if (e.newLine){
-			this.line.lineWidth = this.lineFeatures.getLineWidth();
-			this.line.strokeStyle = this.lineFeatures.getStrokeStyle();
-			this.line.beginPath();
-			this.line.moveTo(e.x, e.y);
-		} else {
-			this.line.lineTo(e.x, e.y);
-			this.line.stroke();
-		}
-
-
-	}
-
-}
 
 
 
@@ -187,11 +148,9 @@ class CanvasListener {
 	}
 
 
-
 	setBeginLinePosition(e) {
 		this.positions.push(e.clientX, e.clientY);
 		this.sendCallbacks(e.clientX, e.clientY, true);
-
 	}
 
 	sendCallbacks(x, y, newLine){
@@ -217,10 +176,7 @@ class CanvasListener {
 		if (this.checkPixelDifference(e.clientX, e.clientY) > 10){
 			this.positions = [e.clientX, e.clientY];
 			this.sendCallbacks(e.clientX, e.clientY, false);
-
-
 		}
-
 	}
 
 	addLineListener(callback){
@@ -234,11 +190,12 @@ class LineDrawer{
 
 	constructor(canvasID, lineDataCollector, serverTalker) {
 		this.canvasID = canvasID;
+		this.lineDataCollector = lineDataCollector;
+		this.serverTalker = serverTalker;
+
 		this.canvas = document.getElementById(this.canvasID);
 		this.line = this.canvas.getContext("2d");
 
-		this.lineDataCollector = lineDataCollector;
-		this.serverTalker = serverTalker;
 		setInterval(this.drawAllLines.bind(this), 100);
 	}
 
@@ -253,21 +210,17 @@ class LineDrawer{
 		}
 		this.line.stroke();
 
-
 	}
 
 
 	drawAllLines() {
 		var that = this;
+		this.line.clearRect(0,0,400, 400);
 		this.serverTalker.latestDrawnLines().forEach(function(lineData){
 			that.drawLine(lineData);
 		});
 
-
-
 		this.drawLine(this.lineDataCollector.getLineData());
-
-
 
 	}
 
@@ -276,12 +229,12 @@ class LineDrawer{
 
 
 
-
 class LineDataCollector {
 
 	constructor(canvasListener, lineFeatures, serverTalker) {
 		this.lineFeatures = lineFeatures;
 		this.serverTalker = serverTalker;
+
 		this.startNewLine();
 		canvasListener.addLineListener(this.lineDataFromCallback.bind(this));
 	}
@@ -295,7 +248,7 @@ class LineDataCollector {
 	}
 
 	lineDataFromCallback(e){
-		if (e.newLine){
+		if (e.newLine /*|| this.lineData.positions.length > 12*/){
 			this.startNewLine();
 		}
 
@@ -310,70 +263,12 @@ class LineDataCollector {
 
 }
 
-/*
-
-// Drawing existing lines recieved from backend
-
-class DrawExistingLines {
-
-	constructor(canvasID){
-		this.canvasID = canvasID;
-		this.canvas = document.getElementById(this.canvasID);
-		this.line = this.canvas.getContext("2d");
-		this.line.lineWidth;
-		this.line.strokeStyle;
-	}
-
-
-	start(lineData){
-		this.line.beginPath();
-		this.line.moveTo(lineData["positions"][0], lineData["positions"][1]);
-
-	}
-
-	getLineFeatures(lineData){
-		this.line.lineWidth = lineData["lineWidth"];
-		this.line.strokeStyle = lineData["strokeStyle"];
-
-	}
-
-	drawLinePositions(lineData){
-		for (var pos = 2 ; pos < lineData["positions"].length ; pos += 2){
-			this.line.lineTo(lineData["positions"][pos], lineData["positions"][pos+1]);
-			this.line.stroke();
-		}
-	}
-
-	drawAllLines(allLines){
-		var that = this;
-		allLines.forEach(function(x){
-			that.getLineFeatures(x);
-			that.start(x);
-			that.drawLinePositions(x);
-		})
-
-
-	}
-
-}
-*/
 
 
 
 $(function(){
 
 	setup();
-
-	//var drawExistingLines = new DrawExistingLines("mycanvas");
-
-
-
-	//checkForDrawnLines();
-
-
-
-
-
 
 
 });
