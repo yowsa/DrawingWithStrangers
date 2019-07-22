@@ -1,3 +1,14 @@
+function setup(){
+	var canvasListener = new CanvasListener("mycanvas");
+	var colorPicker = new iro.ColorPicker("#color-picker-contrainer");
+	var lineFeatures = new LineFeatures(colorPicker);
+	var serverTalker = new ServerTalker();
+	var lineDataCollector = new LineDataCollector(canvasListener, lineFeatures, serverTalker);
+	var lineDrawer = new LineDrawer("mycanvas", lineDataCollector, serverTalker);
+
+
+}
+
 
 class ServerTalker{
 
@@ -16,7 +27,7 @@ class ServerTalker{
 			success: function(x){
 				//console.log(JSON.stringify(x));
 			}
-			});
+		});
 
 	}
 
@@ -44,12 +55,12 @@ class ServerTalker{
 }
 
 
-
 class LineFeatures {
 
-	constructor(){
+	constructor(colorPicker){
 		this.strokeStyle = "#ffff00";
 		this.lineWidth = 15;
+		this.colorPicker = colorPicker;
 		var that = this;
 		document.getElementById("lineWidth").innerText = this.getLineWidth();
 
@@ -82,10 +93,12 @@ class LineFeatures {
 
 	setStrokeStyle(strokeStyle){
 		this.strokeStyle = strokeStyle;
+		console.log(this.colorPicker.color.hexString);
+		console.log(this.strokeStyle);
 	}
 
 	getStrokeStyle(){
-		return this.strokeStyle;
+		return this.colorPicker.color.hexString;
 	}
 
 	increaseLineWidth(){
@@ -107,15 +120,6 @@ class LineFeatures {
 }
 
 
-function setup(){
-	var canvasListener = new CanvasListener("mycanvas");
-	var lineFeatures = new LineFeatures();
-	var serverTalker = new ServerTalker();
-	var lineDataCollector = new LineDataCollector(canvasListener, lineFeatures, serverTalker);
-	var lineDrawer = new LineDrawer("mycanvas", lineDataCollector, serverTalker)
-
-
-}
 
 
 
@@ -132,6 +136,7 @@ class CanvasListener {
 		this.canvas.addEventListener("mousedown", this.setMouseDown.bind(this));
 		this.canvas.addEventListener("mousedown", this.setBeginLinePosition.bind(this));
 		this.canvas.addEventListener("mousemove", this.saveCanvasPositions.bind(this));
+
 		document.addEventListener("mouseup", this.setNotMouseDown.bind(this));
 
 	}
@@ -221,12 +226,9 @@ class LineDrawer{
 		});
 
 		this.drawLine(this.lineDataCollector.getLineData());
-
 	}
 
-
 }
-
 
 
 class LineDataCollector {
@@ -271,9 +273,10 @@ $(function(){
 	setup();
 
 
+	
+
+
 });
-
-
 
 
 
