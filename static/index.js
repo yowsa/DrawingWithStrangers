@@ -1,6 +1,6 @@
 function setup(){
 	var canvasListener = new CanvasListener("mycanvas");
-	var colorPicker = new iro.ColorPicker("#color-picker-contrainer");
+	var colorPicker = new iro.ColorPicker("#color-picker-contrainer", {color: "#c8ff70"});
 	var lineFeatures = new LineFeatures(colorPicker);
 	var serverTalker = new ServerTalker();
 	var lineDataCollector = new LineDataCollector(canvasListener, lineFeatures, serverTalker);
@@ -58,27 +58,10 @@ class ServerTalker{
 class LineFeatures {
 
 	constructor(colorPicker){
-		this.strokeStyle = "#ffff00";
 		this.lineWidth = 15;
 		this.colorPicker = colorPicker;
 		var that = this;
 		document.getElementById("lineWidth").innerText = this.getLineWidth();
-
-		$("#setColor-Yellow").click(function(){
-			that.setStrokeStyle('yellow');
-		});
-
-		$("#setColor-Black").click(function(){
-			that.setStrokeStyle('black');
-		});
-
-		$("#setColor-Red").click(function(){
-			that.setStrokeStyle('red');
-		});
-
-		$("#setColor-Green").click(function(){
-			that.setStrokeStyle('green');
-		});
 
 		$("#increaseLineWidth").click(function(){
 			that.increaseLineWidth();
@@ -89,12 +72,6 @@ class LineFeatures {
 			that.decreaseLineWidth();
 			document.getElementById("lineWidth").innerText = that.getLineWidth();
 		});
-	}
-
-	setStrokeStyle(strokeStyle){
-		this.strokeStyle = strokeStyle;
-		console.log(this.colorPicker.color.hexString);
-		console.log(this.strokeStyle);
 	}
 
 	getStrokeStyle(){
@@ -220,7 +197,7 @@ class LineDrawer{
 
 	drawAllLines() {
 		var that = this;
-		this.line.clearRect(0,0,400, 400);
+		this.line.clearRect(0,0,500, 500);
 		this.serverTalker.latestDrawnLines().forEach(function(lineData){
 			that.drawLine(lineData);
 		});
