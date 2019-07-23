@@ -1,6 +1,6 @@
 function setup(){
 	var canvasListener = new CanvasListener("mycanvas");
-	var colorPicker = new iro.ColorPicker("#color-picker-contrainer", {color: "#c8ff70"});
+	var colorPicker = new iro.ColorPicker("#color-picker-contrainer", {color: "rgb(200, 255, 112, 1)" });
 	var lineFeatures = new LineFeatures(colorPicker);
 	var serverTalker = new ServerTalker();
 	var lineDataCollector = new LineDataCollector(canvasListener, lineFeatures, serverTalker);
@@ -74,8 +74,18 @@ class LineFeatures {
 		});
 	}
 
+	rgbConvertor(rgbData){
+		if ("a" in rgbData != true){
+			rgbData.a = 1.0;
+		}
+		var rgbString = `rgb(${rgbData.r}, ${rgbData.g}, ${rgbData.b}, ${rgbData.a})`;
+		return rgbString;
+
+	}
+
 	getStrokeStyle(){
-		return this.colorPicker.color.hexString;
+		var rgbString = this.rgbConvertor(this.colorPicker.color.rgb);
+		return rgbString;
 	}
 
 	increaseLineWidth(){
