@@ -4,7 +4,7 @@ function setup(){
 	var lineFeatures = new LineFeatures(colorPicker);
 	var serverTalker = new ServerTalker();
 	var lineDataCollector = new LineDataCollector(canvasListener, lineFeatures, serverTalker);
-	var lineDrawer = new LineDrawer("mycanvas", lineDataCollector, serverTalker);
+	var lineDrawer = new LineDrawer("mycanvas", lineDataCollector, serverTalker, lineFeatures);
 
 
 }
@@ -84,8 +84,7 @@ class LineFeatures {
 	}
 
 	getStrokeStyle(){
-		var rgbString = this.rgbConvertor(this.colorPicker.color.rgb);
-		return rgbString;
+		return this.colorPicker.color.rgb;
 	}
 
 	increaseLineWidth(){
@@ -180,10 +179,11 @@ class CanvasListener {
 
 class LineDrawer{
 
-	constructor(canvasID, lineDataCollector, serverTalker) {
+	constructor(canvasID, lineDataCollector, serverTalker, lineFeatures) {
 		this.canvasID = canvasID;
 		this.lineDataCollector = lineDataCollector;
 		this.serverTalker = serverTalker;
+		this.lineFeatures = lineFeatures;
 
 		this.canvas = document.getElementById(this.canvasID);
 		this.line = this.canvas.getContext("2d");
@@ -194,7 +194,7 @@ class LineDrawer{
 
 	drawLine(lineData) {
 		this.line.lineWidth = lineData.lineWidth;
-		this.line.strokeStyle = lineData.strokeStyle;
+		this.line.strokeStyle = this.lineFeatures.rgbConvertor(lineData.strokeStyle);
 		this.line.beginPath();
 		this.line.moveTo(lineData.positions[0], lineData.positions[1]);
 		for (var posPair = 2; posPair < lineData.positions.length; posPair += 2){
