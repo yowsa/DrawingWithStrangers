@@ -124,15 +124,15 @@ class CanvasListener {
 
 	setNotMouseDown(e){
 		if (this.isMouseDown){
-			this.sendCallbacks(e.clientX, e.clientY, false);
+			this.sendCallbacks(e.offsetX, e.offsetY, false);
 			this.isMouseDown = false;
 		}
 	}
 
 
 	setBeginLinePosition(e) {
-		this.positions.push(e.clientX, e.clientY);
-		this.sendCallbacks(e.clientX, e.clientY, true);
+		this.positions.push(e.offsetX, e.offsetY);
+		this.sendCallbacks(e.offsetX, e.offsetY, true);
 	}
 
 	sendCallbacks(x, y, newLine){
@@ -155,9 +155,9 @@ class CanvasListener {
 		if (!this.isMouseDown){
 			return;
 		}
-		if (this.checkPixelDifference(e.clientX, e.clientY) > 10){
-			this.positions = [e.clientX, e.clientY];
-			this.sendCallbacks(e.clientX, e.clientY, false);
+		if (this.checkPixelDifference(e.offsetX, e.offsetY) > 10){
+			this.positions = [e.offsetX, e.offsetY];
+			this.sendCallbacks(e.offsetX, e.offsetY, false);
 		}
 	}
 
@@ -227,7 +227,13 @@ class LineDataCollector {
 	}
 
 	lineDataFromCallback(e){
-		if (e.newLine /*|| this.lineData.positions.length > 12*/){
+		if (e.newLine){
+			this.startNewLine();
+		}
+
+		if (this.lineData.positions.length > 22){
+			this.lineData.positions.push(e.x, e.y);
+			this.serverTalker.sendLineData(this.lineData);
 			this.startNewLine();
 		}
 
