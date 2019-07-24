@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify, json
-#from flask import json
 
 app = Flask(__name__)
 
@@ -29,10 +28,8 @@ class LineReceiver:
 
     def updateLineOpacity(self):
         for index in range(min(self.maxlines, len(self.drawnLinesData))):
-            self.adjustedindex = index+1
-            if len(self.drawnLinesData) < self.maxlines:
-                self.adjustedindex = index + 1 + self.maxlines - len(self.drawnLinesData)
-            self.drawnLinesData[index]["strokeStyle"]["a"] = float(self.adjustedindex)/float(self.maxlines)
+            adjusted_index = index + (self.maxlines - len(self.drawnLinesData)) + 1
+            self.drawnLinesData[index]["strokeStyle"]["a"] = float(adjusted_index) / self.maxlines
 
 
 lines = LineReceiver()
