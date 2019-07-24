@@ -28,24 +28,11 @@ class LineReceiver:
             self.drawnLinesData.pop(0)
 
     def updateLineOpacity(self):
-        if len(self.drawnLinesData) == self.maxlines:
-            for lineDict in self.drawnLinesData:
-                if self.drawnLinesData.index(lineDict) < 5:
-                    lineDict["strokeStyle"]["a"] = 0.1
-
-                if self.drawnLinesData.index(lineDict) >= 5 and self.drawnLinesData.index(lineDict) < 10:
-                    lineDict["strokeStyle"]["a"] = 0.3
-
-                if self.drawnLinesData.index(lineDict) >= 10 and self.drawnLinesData.index(lineDict) < 15:
-                    lineDict["strokeStyle"]["a"] = 0.4
-
-                if self.drawnLinesData.index(lineDict) >= 15 and self.drawnLinesData.index(lineDict) < 20:
-                    lineDict["strokeStyle"]["a"] = 0.6
-
-                if self.drawnLinesData.index(lineDict) >= 20 and self.drawnLinesData.index(lineDict) < 25:
-                    lineDict["strokeStyle"]["a"] = 0.8
-
-
+        for index in range(min(self.maxlines, len(self.drawnLinesData))):
+            self.adjustedindex = index+1
+            if len(self.drawnLinesData) < self.maxlines:
+                self.adjustedindex = index + 1 + self.maxlines - len(self.drawnLinesData)
+            self.drawnLinesData[index]["strokeStyle"]["a"] = float(self.adjustedindex)/float(self.maxlines)
 
 
 lines = LineReceiver()
