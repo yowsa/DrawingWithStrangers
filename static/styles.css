@@ -1,0 +1,144 @@
+body {
+	background-color: #d3d3d3;
+}
+
+
+.settings-container {
+	padding-top: 20px;
+	float: left;
+	background-color: #ffffff;
+	height: 580px;
+	width: 220px;
+	border: 2px #999999 solid;
+	margin-right: 20px;
+	text-align: center;
+}
+
+.logo {
+	background-image: url("assets/pen-55x55-2.png");
+	background-repeat: no-repeat;
+	height: 55px;
+	width: 55px;
+	display: inline-block;
+}
+
+.header {
+	font-size: 21px;
+	color: #000000;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 900;
+	padding-bottom: 20px;
+	padding-top: 10px;
+
+
+}
+
+
+
+
+
+
+
+#color-picker-contrainer {
+	display: inline-block;
+}
+
+.line-sizing{
+	height: 40px;
+	width: 200px;
+	padding: 20px 10px 20px 10px;
+
+
+
+}
+
+.plus-minus-container {
+	border: 2px #999999 solid;
+	border-radius: 50%;
+	width: 40px;
+	height: 40px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+}
+
+.plus-minus-container:hover {
+	border: 2px #d9d9d9 solid;
+	background-color: #999999;
+	border-radius: 50%;
+	width: 40px;
+	height: 40px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #ffffff;
+
+}
+
+.plus-minus-icon {
+	color: #999999;
+	font-size: 30px;
+	width: 40px;
+	height: 40px;
+	cursor: default;
+	-webkit-user-select: none;  
+	-moz-user-select: none;    
+	-ms-user-select: none;      
+	user-select: none;
+
+}
+
+.plus-minus-icon:hover {
+	color: #d9d9d9;
+	font-size: 30px;
+	width: 40px;
+	height: 40px;
+	cursor: default;
+	-webkit-user-select: none;  
+	-moz-user-select: none;    
+	-ms-user-select: none;      
+	user-select: none;
+
+}
+
+#lineWidth {
+	font-family: 'Roboto', sans-serif;
+	font-size: 25px;
+	font-weight: 900;
+	width: 110px;
+	height: 40px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+}
+
+.created-by {
+		font-family: 'Roboto', sans-serif;
+		font-size: 10px;
+	height: 50px;
+	width: 200px;
+	display: inline-block;
+}
+
+
+.float-right{
+	float: right;
+}
+
+.float-left{
+	float: left;
+}
+
+
+
+
+.canvas-container {
+	float: left;
+}
+
+#mycanvas {
+	background-color: #ffffff;
+	border: 2px #999999 solid;
+}

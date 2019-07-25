@@ -1,6 +1,11 @@
 function setup(){
 	var canvasListener = new CanvasListener("mycanvas");
-	var colorPicker = new iro.ColorPicker("#color-picker-contrainer", {color: "rgba(200, 255, 112, 1)" });
+	var colorPicker = new iro.ColorPicker("#color-picker-contrainer", {
+		color: "rgba(200, 255, 112, 1)",
+		borderColor: "#d9d9d9",
+		borderWidth: 2,
+		width: 200,
+	});
 	var lineFeatures = new LineFeatures(colorPicker);
 	var serverTalker = new ServerTalker();
 	var lineDataCollector = new LineDataCollector(canvasListener, lineFeatures, serverTalker);
@@ -92,7 +97,7 @@ class LineFeatures {
 	}
 
 	increaseLineWidth(){
-		if (this.lineWidth < 20){
+		if (this.lineWidth < 30){
 			this.lineWidth += 1;
 		}
 	}
@@ -211,7 +216,7 @@ class LineDrawer{
 
 	drawAllLines() {
 		var that = this;
-		this.line.clearRect(0,0,500, 500);
+		this.line.clearRect(0,0,600, 600);
 		this.serverTalker.latestDrawnLines().forEach(function(lineData){
 			that.drawLine(lineData);
 		});
@@ -248,7 +253,10 @@ class LineDataCollector {
 		if (this.lineData.positions.length > 22){
 			this.lineData.positions.push(e.x, e.y);
 			this.serverTalker.sendLineData(this.lineData);
+			console.log(this.lineData);
+			var lastTwoPos = {x: this.lineData.positions[this.lineData.positions.length -4], y: this.lineData.positions[this.lineData.positions.length -3]};
 			this.startNewLine();
+			this.lineData.positions.push(lastTwoPos.x, lastTwoPos.y);
 		}
 
 		this.lineData.positions.push(e.x, e.y);

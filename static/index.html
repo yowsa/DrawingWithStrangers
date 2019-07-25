@@ -4,29 +4,41 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="iro.min.js"></script>
     <script type="text/javascript" src="index.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 
     <title></title>
 </head>
 <body>
-    <div style="float: left"><canvas id="mycanvas" width="500" height="500" style="border: 1px solid #000fff;"></canvas></div>
-
-    <div style="float: left">
-        <div>
-         <p id="lineWidth"></p><button id="increaseLineWidth">Increase line width</button>
-            <button id="decreaseLineWidth">Decrease line width</button>
-
-        </div>
-        <div id="color-picker-contrainer"> </div>
-
-
+   <div class="settings-container">
+    <div class="logo"></div>
+    <div class="header"><span style="font-size: 40px">DRAWING</span><br/>WITH STRANGERS</div>
+    <div id="color-picker-contrainer"> </div>
+    <div>
+    <div class="line-sizing">
+        <div id="decreaseLineWidth" class="plus-minus-container float-left"><div class="plus-minus-icon">–</div></div>
+        <div id="lineWidth" class="float-left"></div>
+        <div id="increaseLineWidth" class="plus-minus-container float-right"><div class="plus-minus-icon">+</div></div>
     </div>
 
 
 
+</div>
+
+<div class="created-by">created by Josefin Fundin</div>
+
+
+</div>
+
+<div class="canvas-container"><canvas id="mycanvas" width="600" height="600"></canvas></div>
 
 
 
-    <p></p>
+
+
+
+
+<p></p>
 
 
 
