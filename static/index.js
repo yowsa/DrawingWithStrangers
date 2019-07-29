@@ -15,6 +15,8 @@ function setup(){
 }
 
 
+
+
 class ServerTalker{
 
 	constructor() {
@@ -253,7 +255,6 @@ class LineDataCollector {
 		if (this.lineData.positions.length > 22){
 			this.lineData.positions.push(e.x, e.y);
 			this.serverTalker.sendLineData(this.lineData);
-			console.log(this.lineData);
 			var lastTwoPos = {x: this.lineData.positions[this.lineData.positions.length -4], y: this.lineData.positions[this.lineData.positions.length -3]};
 			this.startNewLine();
 			this.lineData.positions.push(lastTwoPos.x, lastTwoPos.y);
