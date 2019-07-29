@@ -1,7 +1,7 @@
 function setup(){
 	var canvasListener = new CanvasListener("mycanvas");
 	var colorPicker = new iro.ColorPicker("#color-picker-contrainer", {
-		color: "rgba(200, 255, 112, 1)",
+		color: "rgb(200, 255, 112)",
 		borderColor: "#d9d9d9",
 		borderWidth: 2,
 		width: 200,
@@ -10,11 +10,7 @@ function setup(){
 	var serverTalker = new ServerTalker();
 	var lineDataCollector = new LineDataCollector(canvasListener, lineFeatures, serverTalker);
 	var lineDrawer = new LineDrawer("mycanvas", lineDataCollector, serverTalker, lineFeatures);
-
-
 }
-
-
 
 
 class ServerTalker{
@@ -82,20 +78,13 @@ class LineFeatures {
 	}
 
 	rgbConvertor(rgbData){
-		//if ("a" in rgbData != true){
-		//	rgbData.a = 1.0;
-		//}
-		var rgbString = "rgba("+rgbData.r+","+rgbData.g+","+rgbData.b+","+rgbData.a+")";
+		var rgbString = "rgb("+rgbData.r+","+rgbData.g+","+rgbData.b+")";
 		return rgbString;
 
 	}
 
 	getStrokeStyle(){
-		var rgbData = this.colorPicker.color.rgb;
-		if ("a" in rgbData != true){
-			rgbData.a = 1.0;
-		}
-		return rgbData;
+		return this.colorPicker.color.rgb;
 	}
 
 	increaseLineWidth(){

@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, json
+import copy
 
 app = Flask(__name__)
 
@@ -8,6 +9,7 @@ class LineReceiver:
     def __init__(self):
         self.drawnLinesData = []
         self.maxlines = 40
+        self.fadeOutLines = 40
 
 
     def addLine(self, lineData):
@@ -18,18 +20,22 @@ class LineReceiver:
 
         self.drawnLinesData.append(lineData)
 
-
-    def getLines(self):
-        return self.drawnLinesData
-
     def deleteOldLines(self):
         if len(self.drawnLinesData) > self.maxlines:
             self.drawnLinesData.pop(0)
 
-    def updateLineOpacity(self):
-        for index in range(min(self.maxlines, len(self.drawnLinesData))):
-            adjusted_index = index + (self.maxlines - len(self.drawnLinesData)) + 1
-            self.drawnLinesData[index]["strokeStyle"]["a"] = float(adjusted_index) / self.maxlines
+    def updateWhiteBalance(self, color, maxcolor, percentage):
+        return round(percentage * color + (1-percentage) * maxcolor)
+
+
+    def updateVisibility(self, newLineData):
+        self.newLineData = newLineData
+        for index in range(min(self.fadeOutLines, len(self.newLineData))):
+            visibility_percentage = float(index + (self.fadeOutLines - len(self.newLineData)) + 1) / self.fadeOutLines
+            self.newLineData[index]["strokeStyle"]["r"] = self.updateWhiteBalance(self.newLineData[index]["strokeStyle"]["r"], 255, visibility_percentage)
+            self.newLineData[index]["strokeStyle"]["g"] = self.updateWhiteBalance(self.newLineData[index]["strokeStyle"]["g"], 255, visibility_percentage)
+            self.newLineData[index]["strokeStyle"]["b"] = self.updateWhiteBalance(self.newLineData[index]["strokeStyle"]["b"], 255, visibility_percentage)
+        return self.newLineData
 
 
 lines = LineReceiver()
@@ -40,13 +46,13 @@ def convert():
     lineData = request.get_json()
     lines.addLine(lineData)
     lines.deleteOldLines()
-    lines.updateLineOpacity()
     return jsonify(lineData)
 
 
 
 @app.route('/hello', methods=['GET'])
 def hello_world():
-    return jsonify(lines.getLines())
+    newLineData = copy.deepcopy(lines.drawnLinesData)
+    return jsonify(lines.updateVisibility(newLineData))
 
 

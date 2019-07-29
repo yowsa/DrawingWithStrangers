@@ -86,6 +86,22 @@ class test_convertor(unittest.TestCase):
         self.assertEqual(lineReciever.getLines(), [line1_3, line2_3, line3_3])
 
 
+    def test_change_white_balance(self):
+        lineReciever = main.LineReceiver()
+        self.assertEqual(lineReciever.updateWhiteBalance(200, 255, 0.8), 211)
+        self.assertEqual(lineReciever.updateWhiteBalance(100, 255, 0.8), 131)
+        self.assertEqual(lineReciever.updateWhiteBalance(50, 255, 0.8), 91)
+        self.assertEqual(lineReciever.updateWhiteBalance(200, 255, 0.5), 228)
+
+    def test_update_visibility(self):
+        lineReciever = main.LineReceiver()
+        lineReciever.drawnLinesData = [{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50, "a": 1}, "lineWidth" : 5, 'positions' : [5,6,600,344]}, {"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 50, "g": 200, "b": 100, "a": 1}, "lineWidth" : 5, 'positions' : [5,6,600,344]}]
+        lineReciever.updateVisibility()
+        self.assertEqual(lineReciever.drawnLinesData[0]["strokeStyle"]["r"], 201)
+        self.assertEqual(lineReciever.drawnLinesData[0]["strokeStyle"]["g"], 104)
+        self.assertEqual(lineReciever.drawnLinesData[0]["strokeStyle"]["b"], 55)
+
+
 
 
 
