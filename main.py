@@ -6,10 +6,10 @@ app = Flask(__name__)
 
 class LineReceiver:
     
-    def __init__(self):
+    def __init__(self, maxlines, fadeOutLines):
         self.drawnLinesData = []
-        self.maxlines = 40
-        self.fadeOutLines = 40
+        self.maxlines = maxlines
+        self.fadeOutLines = fadeOutLines
 
 
     def addLine(self, lineData):
@@ -28,17 +28,29 @@ class LineReceiver:
         return round(percentage * color + (1-percentage) * maxcolor)
 
 
-    def updateVisibility(self, newLineData):
-        self.newLineData = newLineData
-        for index in range(min(self.fadeOutLines, len(self.newLineData))):
-            visibility_percentage = float(index + (self.fadeOutLines - len(self.newLineData)) + 1) / self.fadeOutLines
-            self.newLineData[index]["strokeStyle"]["r"] = self.updateWhiteBalance(self.newLineData[index]["strokeStyle"]["r"], 255, visibility_percentage)
-            self.newLineData[index]["strokeStyle"]["g"] = self.updateWhiteBalance(self.newLineData[index]["strokeStyle"]["g"], 255, visibility_percentage)
-            self.newLineData[index]["strokeStyle"]["b"] = self.updateWhiteBalance(self.newLineData[index]["strokeStyle"]["b"], 255, visibility_percentage)
-        return self.newLineData
+    def testvisibility(self):
+        newLineData = copy.deepcopy(self.drawnLinesData)
+
+        for index in range(min(self.fadeOutLines, len(newLineData))):
+            strokeStyle = newLineData[index]["strokeStyle"]
+            visibility_percentage = float(index + (self.fadeOutLines - len(newLineData)) + 1) / self.fadeOutLines
+            updatedColors = {k:self.updateWhiteBalance(strokeStyle[k], 255, visibility_percentage) for k, v in strokeStyle.iteritems()}
+            strokeStyle.update(updatedColors)
+        return newLineData
 
 
-lines = LineReceiver()
+    def updateVisibility(self):
+        newLineData = copy.deepcopy(self.drawnLinesData)
+
+        for index in range(min(self.fadeOutLines, len(newLineData))):
+            strokeStyle = newLineData[index]["strokeStyle"]
+            visibility_percentage = float(index + (self.fadeOutLines - len(newLineData)) + 1) / self.fadeOutLines
+            updatedColors = {k:self.updateWhiteBalance(strokeStyle[k], 255, visibility_percentage) for k, v in strokeStyle.iteritems()}
+            strokeStyle.update(updatedColors)
+        return newLineData
+
+
+lines = LineReceiver(40, 40)
 
 @app.route('/convert', methods=['POST'])
 def convert():
@@ -52,7 +64,6 @@ def convert():
 
 @app.route('/hello', methods=['GET'])
 def hello_world():
-    newLineData = copy.deepcopy(lines.drawnLinesData)
-    return jsonify(lines.updateVisibility(newLineData))
+    return jsonify(lines.updateVisibility())
 
 

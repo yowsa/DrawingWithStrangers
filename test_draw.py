@@ -27,39 +27,39 @@ class test_convertor(unittest.TestCase):
 
 
     def test_line_reciever_get_lines(self):
-        lineReciever = main.LineReceiver()
-        self.assertEqual(lineReciever.getLines(), [])
+        lineReciever = main.LineReceiver(40, 40)
+        self.assertEqual(lineReciever.drawnLinesData, [])
 
 
     def test_line_reciever_add_lines_one_line(self):
         # Arrange
-        lineReciever = main.LineReceiver()
+        lineReciever = main.LineReceiver(40, 40)
         info = {"lineNo" : 0.14659992255522303, "strokeStyle" : 'black', "lineWidth" : 5, 'positions' : [5,6]}
         
         # Act
         lineReciever.addLine(info)
 
         # Assert
-        self.assertEqual(lineReciever.getLines(), [info])
+        self.assertEqual(lineReciever.drawnLinesData, [info])
 
     def test_line_reciever_add_lines_multiple_positions(self):
-        lineReciever = main.LineReceiver()
+        lineReciever = main.LineReceiver(40, 40)
         info = {"lineNo" : 0.14659992255522303, "strokeStyle" : 'black', "lineWidth" : 5, 'positions' : [5,6,600,344]}
         updatedInfo1 = {"lineNo" : 0.14659992255522303, "strokeStyle" : 'black', "lineWidth" : 5, 'positions' : [5,6,600,344, 53, 233]}
         updatedInfo2 = {"lineNo" : 0.14659992255522303, "strokeStyle" : 'black', "lineWidth" : 5, 'positions' : [5,6,600,344, 53, 233, 455, 22]}
 
         lineReciever.addLine(info)
-        self.assertEqual(lineReciever.getLines(), [info])
+        self.assertEqual(lineReciever.drawnLinesData, [info])
 
         lineReciever.addLine(updatedInfo1)
-        self.assertEqual(lineReciever.getLines(), [updatedInfo1])
+        self.assertEqual(lineReciever.drawnLinesData, [updatedInfo1])
 
         lineReciever.addLine(updatedInfo2)
-        self.assertEqual(lineReciever.getLines(), [updatedInfo2])
+        self.assertEqual(lineReciever.drawnLinesData, [updatedInfo2])
 
 
     def test_line_reciever_add_lines_multiple_lines_multiple_positions(self):
-        lineReciever = main.LineReceiver()
+        lineReciever = main.LineReceiver(40, 40)
         line1_1 = {"lineNo" : 0.14659992255522303, "strokeStyle" : 'black', "lineWidth" : 5, 'positions' : [5,6,600,344]}
         line1_2 = {"lineNo" : 0.14659992255522303, "strokeStyle" : 'black', "lineWidth" : 5, 'positions' : [5,6,600,344, 53, 233]}
         line1_3 = {"lineNo" : 0.14659992255522303, "strokeStyle" : 'black', "lineWidth" : 5, 'positions' : [5,6,600,344, 53, 233, 455, 22]}    
@@ -73,33 +73,33 @@ class test_convertor(unittest.TestCase):
         lineReciever.addLine(line1_1)
         lineReciever.addLine(line1_2)
         lineReciever.addLine(line1_3)
-        self.assertEqual(lineReciever.getLines(), [line1_3])
+        self.assertEqual(lineReciever.drawnLinesData, [line1_3])
 
         lineReciever.addLine(line2_1)
         lineReciever.addLine(line2_2)
         lineReciever.addLine(line2_3)
-        self.assertEqual(lineReciever.getLines(), [line1_3, line2_3])
+        self.assertEqual(lineReciever.drawnLinesData, [line1_3, line2_3])
 
         lineReciever.addLine(line3_1)
         lineReciever.addLine(line3_2)
         lineReciever.addLine(line3_3)
-        self.assertEqual(lineReciever.getLines(), [line1_3, line2_3, line3_3])
+        self.assertEqual(lineReciever.drawnLinesData, [line1_3, line2_3, line3_3])
 
 
     def test_change_white_balance(self):
-        lineReciever = main.LineReceiver()
+        lineReciever = main.LineReceiver(40, 40)
         self.assertEqual(lineReciever.updateWhiteBalance(200, 255, 0.8), 211)
         self.assertEqual(lineReciever.updateWhiteBalance(100, 255, 0.8), 131)
         self.assertEqual(lineReciever.updateWhiteBalance(50, 255, 0.8), 91)
         self.assertEqual(lineReciever.updateWhiteBalance(200, 255, 0.5), 228)
 
     def test_update_visibility(self):
-        lineReciever = main.LineReceiver()
-        lineReciever.drawnLinesData = [{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50, "a": 1}, "lineWidth" : 5, 'positions' : [5,6,600,344]}, {"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 50, "g": 200, "b": 100, "a": 1}, "lineWidth" : 5, 'positions' : [5,6,600,344]}]
-        lineReciever.updateVisibility()
-        self.assertEqual(lineReciever.drawnLinesData[0]["strokeStyle"]["r"], 201)
-        self.assertEqual(lineReciever.drawnLinesData[0]["strokeStyle"]["g"], 104)
-        self.assertEqual(lineReciever.drawnLinesData[0]["strokeStyle"]["b"], 55)
+        lineReciever = main.LineReceiver(40, 40)
+        lineReciever.drawnLinesData = [{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]}, {"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 50, "g": 200, "b": 100}, "lineWidth" : 5, 'positions' : [5,6,600,344]}]
+        newLineData = lineReciever.updateVisibility()
+        self.assertEqual(newLineData[0]["strokeStyle"]["r"], 201)
+        self.assertEqual(newLineData[0]["strokeStyle"]["g"], 104)
+        self.assertEqual(newLineData[0]["strokeStyle"]["b"], 55)
 
 
 
