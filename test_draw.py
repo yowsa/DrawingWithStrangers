@@ -93,13 +93,35 @@ class test_convertor(unittest.TestCase):
         self.assertEqual(lineReciever.updateWhiteBalance(50, 255, 0.8), 91)
         self.assertEqual(lineReciever.updateWhiteBalance(200, 255, 0.5), 228)
 
+
+
+
+
     def test_update_visibility(self):
-        lineReciever = main.LineReceiver(40, 40)
-        lineReciever.drawnLinesData = [{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]}, {"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 50, "g": 200, "b": 100}, "lineWidth" : 5, 'positions' : [5,6,600,344]}]
-        newLineData = lineReciever.updateVisibility()
-        self.assertEqual(newLineData[0]["strokeStyle"]["r"], 201)
-        self.assertEqual(newLineData[0]["strokeStyle"]["g"], 104)
-        self.assertEqual(newLineData[0]["strokeStyle"]["b"], 55)
+        lineReciever_2_1 = main.LineReceiver(2, 1)
+        #2 lines in list
+        lineReciever_2_1.drawnLinesData = [{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]}, {"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 50, "g": 200, "b": 100}, "lineWidth" : 5, 'positions' : [5,6,600,344]},]
+        newLineData_2_1 = lineReciever_2_1.updateVisibility()
+        self.assertEqual(newLineData_2_1[0]["strokeStyle"]["r"], 228)
+        self.assertEqual(newLineData_2_1[0]["strokeStyle"]["g"], 178)
+        self.assertEqual(newLineData_2_1[0]["strokeStyle"]["b"], 153)
+
+        lineReciever_10_5 = main.LineReceiver(10, 5)
+        #9 lines in list
+        lineReciever_10_5.drawnLinesData = [{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]}, {"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]},{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]},{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]},{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]},{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]},{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]},{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]},{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]},]
+        newLineData_10_5 = lineReciever_10_5.updateVisibility()
+        self.assertEqual(newLineData_10_5[0]["strokeStyle"]["r"], 237)
+        self.assertEqual(newLineData_10_5[0]["strokeStyle"]["g"], 203)
+        self.assertEqual(newLineData_10_5[0]["strokeStyle"]["b"], 187)
+
+
+        lineReciever_20_18 = main.LineReceiver(20, 7)
+        #18 lines in list
+        lineReciever_20_18.drawnLinesData = [{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]}, {"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]},{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]},{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]},{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]},{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]},{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]},{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]},{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]},{"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]}, {"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]}, {"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]}, {"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]}, {"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]}, {"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]}, {"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]}, {"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]}, {"lineNo" : 0.14659992255522303, "strokeStyle" : {"r": 200, "g": 100, "b": 50}, "lineWidth" : 5, 'positions' : [5,6,600,344]}, ]
+        newLineData_20_18 = lineReciever_20_18.updateVisibility()
+        self.assertEqual(newLineData_20_18[3]["strokeStyle"]["r"], 214)
+        self.assertEqual(newLineData_20_18[3]["strokeStyle"]["g"], 139)
+        self.assertEqual(newLineData_20_18[3]["strokeStyle"]["b"], 101)
 
 
 

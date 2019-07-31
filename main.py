@@ -27,30 +27,22 @@ class LineReceiver:
     def updateWhiteBalance(self, color, maxcolor, percentage):
         return round(percentage * color + (1-percentage) * maxcolor)
 
-
-    def testvisibility(self):
-        newLineData = copy.deepcopy(self.drawnLinesData)
-
-        for index in range(min(self.fadeOutLines, len(newLineData))):
-            strokeStyle = newLineData[index]["strokeStyle"]
-            visibility_percentage = float(index + (self.fadeOutLines - len(newLineData)) + 1) / self.fadeOutLines
-            updatedColors = {k:self.updateWhiteBalance(strokeStyle[k], 255, visibility_percentage) for k, v in strokeStyle.iteritems()}
-            strokeStyle.update(updatedColors)
-        return newLineData
-
-
     def updateVisibility(self):
         newLineData = copy.deepcopy(self.drawnLinesData)
+        for index in range(len(newLineData)):
+            adjustedIndex = index + (self.maxlines - len(newLineData))
 
-        for index in range(min(self.fadeOutLines, len(newLineData))):
+            if adjustedIndex >= self.fadeOutLines:
+                break
+
             strokeStyle = newLineData[index]["strokeStyle"]
-            visibility_percentage = float(index + (self.fadeOutLines - len(newLineData)) + 1) / self.fadeOutLines
+            visibility_percentage = float(adjustedIndex + 1)/ (self.fadeOutLines + 1)
             updatedColors = {k:self.updateWhiteBalance(strokeStyle[k], 255, visibility_percentage) for k, v in strokeStyle.iteritems()}
             strokeStyle.update(updatedColors)
         return newLineData
 
 
-lines = LineReceiver(40, 40)
+lines = LineReceiver(100, 40)
 
 @app.route('/convert', methods=['POST'])
 def convert():
