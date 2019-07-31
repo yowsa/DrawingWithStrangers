@@ -16,7 +16,8 @@ function setup(){
 class ServerTalker{
 
 	constructor() {
-		setInterval(this.checkForDrawnLines.bind(this), 100);
+		//setInterval(this.checkForDrawnLines.bind(this), 100);
+		this.checkForDrawnLines();
 		this.allLines = [];
 	}
 
@@ -46,7 +47,13 @@ class ServerTalker{
 
 	checkForDrawnLines(){
 		var that = this;
-		this.getLineData(response => that.allLines = response);
+		//this.getLineData(response => that.allLines = response);
+
+		this.getLineData(
+			function(response){
+				that.allLines = response;
+				that.checkForDrawnLines();
+			});
 	}
 
 
