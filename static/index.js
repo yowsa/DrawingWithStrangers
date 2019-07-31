@@ -36,10 +36,15 @@ class ServerTalker{
 	}
 
 	getLineData(callback) {
+		var that = this;
 		$.ajax({
 			datatype: "json",
 			cache: false,
 			url: "/hello",
+			error: function(){
+				that.checkForDrawnLines();
+			},
+			timeout: 3000,
 			success: callback
 		});
 	}
@@ -47,7 +52,7 @@ class ServerTalker{
 
 	checkForDrawnLines(){
 		var that = this;
-		//this.getLineData(response => that.allLines = response);
+		//git this.getLineData(response => that.allLines = response);
 
 		this.getLineData(
 			function(response){
