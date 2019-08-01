@@ -7,18 +7,34 @@ function setup(){
 		width: 200,
 	});
 	var lineFeatures = new LineFeatures(colorPicker);
-	var serverTalker = new ServerTalker();
+	var socket = io();
+	var serverTalker = new ServerTalker(socket);
 	var lineDataCollector = new LineDataCollector(canvasListener, lineFeatures, serverTalker);
 	var lineDrawer = new LineDrawer("mycanvas", lineDataCollector, serverTalker, lineFeatures);
+
 }
+
+
+
 
 
 class ServerTalker{
 
-	constructor() {
-		//setInterval(this.checkForDrawnLines.bind(this), 100);
-		this.checkForDrawnLines();
+
+	constructor(socket) {
+		this.socket = socket;
+
+		//this.checkForDrawnLines();
 		this.allLines = [];
+
+		socket.on('connect', function() {
+			socket.send('connected!');
+		});
+
+		socket.on('message', function(lineData){
+			console.log(lineData);
+		});
+
 	}
 
 	sendLineData(lineData) {
@@ -35,6 +51,13 @@ class ServerTalker{
 
 	}
 
+
+	WSsendLineData(lineData){
+		this.socket.send (JSON.stringify(lineData));
+	}
+
+	
+
 	getLineData(callback) {
 		var that = this;
 		$.ajax({
@@ -44,7 +67,6 @@ class ServerTalker{
 			error: function(){
 				that.checkForDrawnLines();
 			},
-			timeout: 3000,
 			success: callback
 		});
 	}
@@ -52,7 +74,6 @@ class ServerTalker{
 
 	checkForDrawnLines(){
 		var that = this;
-		//git this.getLineData(response => that.allLines = response);
 
 		this.getLineData(
 			function(response){
@@ -255,14 +276,16 @@ class LineDataCollector {
 
 		if (this.lineData.positions.length > 22){
 			this.lineData.positions.push(e.x, e.y);
-			this.serverTalker.sendLineData(this.lineData);
+			//this.serverTalker.sendLineData(this.lineData);
+			this.serverTalker.WSsendLineData(this.lineData);
 			var lastTwoPos = {x: this.lineData.positions[this.lineData.positions.length -4], y: this.lineData.positions[this.lineData.positions.length -3]};
 			this.startNewLine();
 			this.lineData.positions.push(lastTwoPos.x, lastTwoPos.y);
 		}
 
 		this.lineData.positions.push(e.x, e.y);
-		this.serverTalker.sendLineData(this.lineData);
+		//this.serverTalker.sendLineData(this.lineData);
+		this.serverTalker.WSsendLineData(this.lineData);
 
 	}
 

@@ -1,8 +1,9 @@
 from flask import Flask, request, jsonify, json
+from flask_socketio import SocketIO, send
 import copy
 
 app = Flask(__name__)
-
+app.config['SECRET_KEY'] = 'secret!' 
 
 class LineReceiver:
     
@@ -57,5 +58,21 @@ def convert():
 @app.route('/hello', methods=['GET'])
 def hello_world():
     return jsonify(lines.updateVisibility())
+
+
+socketio = SocketIO(app)
+
+testList = []
+
+@socketio.on('message')
+def handle_message(message):
+    testList.append(message)
+    send(message, broadcast=True)
+    print message 
+
+
+
+if __name__ == '__main__':
+    socketio.run(app)
 
 
