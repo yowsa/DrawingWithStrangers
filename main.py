@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify, json
 from flask_socketio import SocketIO, send
+import eventlet
 import copy
+import ast
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!' 
@@ -42,13 +45,13 @@ class LineReceiver:
             strokeStyle.update(updatedColors)
         return newLineData
 
-
 lines = LineReceiver(100, 40)
 
 @app.route('/convert', methods=['POST'])
 def convert():
 
     lineData = request.get_json()
+    #print type(lineData)
     lines.addLine(lineData)
     lines.deleteOldLines()
     return jsonify(lineData)
@@ -64,11 +67,33 @@ socketio = SocketIO(app)
 
 testList = []
 
-@socketio.on('message')
-def handle_message(message):
-    testList.append(message)
-    send(message, broadcast=True)
-    print message 
+#@socketio.on('message')
+#def handle_message(lineData):
+    #lines.addLine(lineData)
+    #lines.deleteOldLines()
+    #send(jsonify(lines.updateVisibility()), broadcast=True)
+#    print 'hejsan'
+
+
+#@socketio.on('json')
+#def handle_json(json):
+#    dictData = ast.literal_eval(json)
+#    print type(dictData)
+
+
+@socketio.on('connect')
+def handle_connect():
+    allLines = lines.updateVisibility()
+    send(allLines, broadcast=True)
+
+@socketio.on('lineData handler')
+def handle_lineData(json):
+    lineData = ast.literal_eval(json)
+    lines.addLine(lineData)
+    lines.deleteOldLines()
+    #lines.updateVisibility()
+    allLines = lines.updateVisibility()
+    send(allLines, broadcast=True)
 
 
 

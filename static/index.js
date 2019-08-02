@@ -14,28 +14,46 @@ function setup(){
 
 }
 
-
-
-
-
 class ServerTalker{
-
 
 	constructor(socket) {
 		this.socket = socket;
 
 		//this.checkForDrawnLines();
 		this.allLines = [];
+		var that = this;
+
+		this.connectCounter = -1;
 
 		socket.on('connect', function() {
-			socket.send('connected!');
+			that.connectCounter ++;
+			that.updateStrangerCount();
+			console.log('added one' + that.connectCounter);
+		});
+
+
+
+		socket.on('disconnect', function() {
+			that.connectCounter --;
+			that.updateStrangerCount();
+			console.log('removed one' + that.connectCounter);
 		});
 
 		socket.on('message', function(lineData){
-			console.log(lineData);
+			that.allLines = lineData;
 		});
 
 	}
+
+
+
+
+
+	updateStrangerCount(){
+		$("#strangers").html(this.connectCounter + ' stranger(s) connected');
+
+	}
+
 
 	sendLineData(lineData) {
 		$.ajax({
@@ -53,7 +71,11 @@ class ServerTalker{
 
 
 	WSsendLineData(lineData){
-		this.socket.send (JSON.stringify(lineData));
+		//this.socket.send(JSON.stringify(lineData));
+		var jsonData = JSON.stringify(lineData);
+
+		this.socket.emit('lineData handler', jsonData);
+
 	}
 
 	
@@ -69,6 +91,12 @@ class ServerTalker{
 			},
 			success: callback
 		});
+	}
+
+
+	test(){
+
+
 	}
 
 
@@ -276,7 +304,7 @@ class LineDataCollector {
 
 		if (this.lineData.positions.length > 22){
 			this.lineData.positions.push(e.x, e.y);
-			//this.serverTalker.sendLineData(this.lineData);
+			this.serverTalker.sendLineData(this.lineData);
 			this.serverTalker.WSsendLineData(this.lineData);
 			var lastTwoPos = {x: this.lineData.positions[this.lineData.positions.length -4], y: this.lineData.positions[this.lineData.positions.length -3]};
 			this.startNewLine();
@@ -284,7 +312,7 @@ class LineDataCollector {
 		}
 
 		this.lineData.positions.push(e.x, e.y);
-		//this.serverTalker.sendLineData(this.lineData);
+		this.serverTalker.sendLineData(this.lineData);
 		this.serverTalker.WSsendLineData(this.lineData);
 
 	}
