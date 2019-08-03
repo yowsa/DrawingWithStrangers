@@ -81,6 +81,11 @@ def handle_connect():
     send(messageHandler.sendMessage(counter.increaseCounter(), "counter"), broadcast=True)
 
 
+@socketio.on('disconnect')
+def handle_connect():
+    send(messageHandler.sendMessage(counter.decreaseCounter(), "counter"), broadcast=True)
+
+
 @socketio.on('lineData handler')
 def handle_lineData(json):
     #receive linedata
