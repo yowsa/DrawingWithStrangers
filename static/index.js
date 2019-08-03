@@ -21,37 +21,25 @@ class ServerTalker{
 		this.allLines = [];
 		var that = this;
 
-		this.connectCounter = -1;
-
-		socket.on('connect', function() {
-			that.connectCounter ++;
-			that.updateStrangerCount();
-			console.log('added one' + that.connectCounter);
+		socket.on('message', function(data){
+			if (data.action == "allLines"){
+				that.allLines = data.data;
+				return that.allLines;
+			}
+			if (data.action == "counter"){
+				that.updateStrangerCount(data.data);
+			}
 		});
-
-		socket.on('disconnect', function() {
-			that.connectCounter --;
-			that.updateStrangerCount();
-			console.log('removed one' + that.connectCounter);
-		});
-
-		socket.on('message', function(lineData){
-			that.allLines = lineData;
-		});
-
 	}
 
 
-	updateStrangerCount(){
-		$("#strangers").html(this.connectCounter + ' stranger(s) connected');
-
+	updateStrangerCount(connections){
+		$("#strangers").html(connections + ' stranger(s) connected');
 	}
-
 
 	WSsendLineData(lineData){
 		var jsonData = JSON.stringify(lineData);
 		this.socket.emit('lineData handler', jsonData);
-
 	}
 
 

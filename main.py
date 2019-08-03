@@ -46,7 +46,30 @@ class LineReceiver:
         return newLineData
 
 
+class ConnectCounter:
+    def __init__(self):
+        self.connectCounter = 0
+
+    def increaseCounter(self):
+        self.connectCounter += 1
+        return self.connectCounter
+
+    def decreaseCounter(self):
+        self.connectCounter -= 1
+        return self.connectCounter
+
+
+class MessageHandler:
+
+    def sendMessage(self, data, type):
+        actionDict = {"data": data, "action" : type}
+        return actionDict
+
+
+
 lines = LineReceiver(100, 40)
+counter = ConnectCounter()
+messageHandler = MessageHandler()
 
 socketio = SocketIO(app)
 
@@ -54,17 +77,18 @@ socketio = SocketIO(app)
 
 @socketio.on('connect')
 def handle_connect():
-    allLines = lines.updateVisibility()
-    send(allLines, broadcast=True)
+    send(messageHandler.sendMessage(lines.updateVisibility(), "allLines"), broadcast=True)
+    send(messageHandler.sendMessage(counter.increaseCounter(), "counter"), broadcast=True)
+
 
 @socketio.on('lineData handler')
 def handle_lineData(json):
+    #receive linedata
     lineData = ast.literal_eval(json)
     lines.addLine(lineData)
     lines.deleteOldLines()
-    allLines = lines.updateVisibility()
-    send(allLines, broadcast=True)
-
+    #send linedata
+    send(messageHandler.sendMessage(lines.updateVisibility(), "allLines"), broadcast=True)
 
 
 if __name__ == '__main__':
