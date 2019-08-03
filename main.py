@@ -45,40 +45,11 @@ class LineReceiver:
             strokeStyle.update(updatedColors)
         return newLineData
 
+
 lines = LineReceiver(100, 40)
-
-@app.route('/convert', methods=['POST'])
-def convert():
-
-    lineData = request.get_json()
-    #print type(lineData)
-    lines.addLine(lineData)
-    lines.deleteOldLines()
-    return jsonify(lineData)
-
-
-
-@app.route('/hello', methods=['GET'])
-def hello_world():
-    return jsonify(lines.updateVisibility())
-
 
 socketio = SocketIO(app)
 
-testList = []
-
-#@socketio.on('message')
-#def handle_message(lineData):
-    #lines.addLine(lineData)
-    #lines.deleteOldLines()
-    #send(jsonify(lines.updateVisibility()), broadcast=True)
-#    print 'hejsan'
-
-
-#@socketio.on('json')
-#def handle_json(json):
-#    dictData = ast.literal_eval(json)
-#    print type(dictData)
 
 
 @socketio.on('connect')
@@ -91,13 +62,12 @@ def handle_lineData(json):
     lineData = ast.literal_eval(json)
     lines.addLine(lineData)
     lines.deleteOldLines()
-    #lines.updateVisibility()
     allLines = lines.updateVisibility()
     send(allLines, broadcast=True)
 
 
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app, host="0.0.0.0")
 
 

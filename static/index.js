@@ -18,8 +18,6 @@ class ServerTalker{
 
 	constructor(socket) {
 		this.socket = socket;
-
-		//this.checkForDrawnLines();
 		this.allLines = [];
 		var that = this;
 
@@ -30,8 +28,6 @@ class ServerTalker{
 			that.updateStrangerCount();
 			console.log('added one' + that.connectCounter);
 		});
-
-
 
 		socket.on('disconnect', function() {
 			that.connectCounter --;
@@ -46,68 +42,16 @@ class ServerTalker{
 	}
 
 
-
-
-
 	updateStrangerCount(){
 		$("#strangers").html(this.connectCounter + ' stranger(s) connected');
 
 	}
 
 
-	sendLineData(lineData) {
-		$.ajax({
-			type: "POST",
-			dataType: "json",
-			contentType: "application/json",
-			url: "/convert",
-			data: JSON.stringify(lineData),
-			success: function(x){
-				//console.log(JSON.stringify(x));
-			}
-		});
-
-	}
-
-
 	WSsendLineData(lineData){
-		//this.socket.send(JSON.stringify(lineData));
 		var jsonData = JSON.stringify(lineData);
-
 		this.socket.emit('lineData handler', jsonData);
 
-	}
-
-	
-
-	getLineData(callback) {
-		var that = this;
-		$.ajax({
-			datatype: "json",
-			cache: false,
-			url: "/hello",
-			error: function(){
-				that.checkForDrawnLines();
-			},
-			success: callback
-		});
-	}
-
-
-	test(){
-
-
-	}
-
-
-	checkForDrawnLines(){
-		var that = this;
-
-		this.getLineData(
-			function(response){
-				that.allLines = response;
-				that.checkForDrawnLines();
-			});
 	}
 
 
@@ -304,7 +248,6 @@ class LineDataCollector {
 
 		if (this.lineData.positions.length > 22){
 			this.lineData.positions.push(e.x, e.y);
-			this.serverTalker.sendLineData(this.lineData);
 			this.serverTalker.WSsendLineData(this.lineData);
 			var lastTwoPos = {x: this.lineData.positions[this.lineData.positions.length -4], y: this.lineData.positions[this.lineData.positions.length -3]};
 			this.startNewLine();
@@ -312,7 +255,6 @@ class LineDataCollector {
 		}
 
 		this.lineData.positions.push(e.x, e.y);
-		this.serverTalker.sendLineData(this.lineData);
 		this.serverTalker.WSsendLineData(this.lineData);
 
 	}
