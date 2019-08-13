@@ -2,8 +2,7 @@ function setup(){
 	var canvasListener = new CanvasListener("mycanvas");
 	var colorPicker = new iro.ColorPicker("#color-picker-contrainer", {
 		color: "rgb(200, 255, 112)",
-		borderColor: "#d9d9d9",
-		borderWidth: 2,
+		borderWidth: 0,
 		width: 200,
 	});
 	var lineFeatures = new LineFeatures(colorPicker);
@@ -32,16 +31,20 @@ class ServerTalker{
 		});
 	}
 
-
 	updateStrangerCount(connections){
-		$("#strangers").html(connections + ' stranger(s) connected');
+		var connectionMessage = "";
+		if (connections > 1){
+			connectionMessage = connections + " strangers connected";
+		} else {
+			connectionMessage = "You are drawing alone"
+		}
+		$("#strangers").html(connectionMessage);
 	}
 
 	WSsendLineData(lineData){
 		var jsonData = JSON.stringify(lineData);
 		this.socket.emit('lineData handler', jsonData);
 	}
-
 
 	latestDrawnLines() {
 		return this.allLines;
@@ -101,8 +104,6 @@ class LineFeatures {
 
 
 
-
-
 class CanvasListener {
 
 	constructor(canvasID){
@@ -131,7 +132,6 @@ class CanvasListener {
 		}
 	}
 
-
 	setBeginLinePosition(e) {
 		this.positions.push(e.offsetX, e.offsetY);
 		this.sendCallbacks(e.offsetX, e.offsetY, true);
@@ -152,7 +152,6 @@ class CanvasListener {
 		return Math.abs(this.positions[0] - posx) + Math.abs(this.positions[1] - posy);
 	}
 
-
 	saveCanvasPositions(e){
 		if (!this.isMouseDown){
 			return;
@@ -167,8 +166,8 @@ class CanvasListener {
 		this.callbacks.push(callback);
 	}
 
-
 }
+
 
 class LineDrawer{
 
@@ -184,7 +183,6 @@ class LineDrawer{
 		setInterval(this.drawAllLines.bind(this), 100);
 	}
 
-
 	drawLine(lineData) {
 		this.line.lineWidth = lineData.lineWidth;
 		this.line.strokeStyle = this.lineFeatures.rgbConvertor(lineData.strokeStyle);
@@ -194,20 +192,17 @@ class LineDrawer{
 			this.line.lineTo(lineData.positions[posPair], lineData.positions[posPair+1]);
 		}
 		this.line.stroke();
-
 	}
-
 
 	drawAllLines() {
 		var that = this;
-		this.line.clearRect(0,0,600, 600);
+		this.line.clearRect(0,0,1000, 600);
 		this.serverTalker.latestDrawnLines().forEach(function(lineData){
 			that.drawLine(lineData);
 		});
 
 		this.drawLine(this.lineDataCollector.getLineData());
 	}
-
 }
 
 
@@ -244,13 +239,11 @@ class LineDataCollector {
 
 		this.lineData.positions.push(e.x, e.y);
 		this.serverTalker.WSsendLineData(this.lineData);
-
 	}
 
 	getLineData(){
 		return this.lineData;
 	}
-
 }
 
 

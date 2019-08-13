@@ -1,12 +1,17 @@
-from flask import Flask, request, jsonify, json
+from flask import Flask, request, jsonify, json, current_app
 from flask_socketio import SocketIO, send
 import eventlet
 import copy
 import ast
 
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!' 
+application = Flask(__name__)
+application.config['SECRET_KEY'] = 'secret!' 
+
+@application.route('/')
+def hello_world():
+    return current_app.send_static_file('index.html')
+
 
 class LineReceiver:
     
@@ -71,7 +76,7 @@ lines = LineReceiver(100, 40)
 counter = ConnectCounter()
 messageHandler = MessageHandler()
 
-socketio = SocketIO(app)
+socketio = SocketIO(application)
 
 
 
@@ -97,6 +102,7 @@ def handle_lineData(json):
 
 
 if __name__ == '__main__':
-    socketio.run(app, host="0.0.0.0")
-
+    socketio.run(application)
+    #application.run()
+#, host="0.0.0.0"
 
