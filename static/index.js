@@ -17,8 +17,8 @@ function setup(){
 function isMobile(){
 	var isMobile = navigator.userAgent.match(
         /(iPhone|iPod|iPad|Android|webOS|BlackBerry|IEMobile|Opera Mini)/i);
-	if (isMobile == True){
-		alert('hej');
+	if (isMobile){
+		alert('Mobile devices are not supported.');
 	}
 }
 
