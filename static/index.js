@@ -10,8 +10,18 @@ function setup(){
 	var serverTalker = new ServerTalker(socket);
 	var lineDataCollector = new LineDataCollector(canvasListener, lineFeatures, serverTalker);
 	var lineDrawer = new LineDrawer("mycanvas", lineDataCollector, serverTalker, lineFeatures);
+	isMobile();
 
 }
+
+function isMobile(){
+	var isMobile = navigator.userAgent.match(
+        /(iPhone|iPod|iPad|Android|webOS|BlackBerry|IEMobile|Opera Mini)/i);
+	if (isMobile == True){
+		alert('hej');
+	}
+}
+
 
 class ServerTalker{
 
