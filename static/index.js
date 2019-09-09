@@ -166,7 +166,7 @@ class CanvasListener {
 		if (!this.isMouseDown){
 			return;
 		}
-		if (this.checkPixelDifference(e.offsetX, e.offsetY) > 10){
+		if (this.checkPixelDifference(e.offsetX, e.offsetY) > 20){
 			this.positions = [e.offsetX, e.offsetY];
 			this.sendCallbacks(e.offsetX, e.offsetY, false);
 		}
@@ -239,7 +239,7 @@ class LineDataCollector {
 			this.startNewLine();
 		}
 
-		if (this.lineData.positions.length > 60){
+		if (this.lineData.positions.length > 22){
 			this.lineData.positions.push(e.x, e.y);
 			this.serverTalker.WSsendLineData(this.lineData);
 			var lastTwoPos = {x: this.lineData.positions[this.lineData.positions.length -4], y: this.lineData.positions[this.lineData.positions.length -3]};
