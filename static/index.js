@@ -239,7 +239,7 @@ class LineDataCollector {
 			this.startNewLine();
 		}
 
-		if (this.lineData.positions.length > 22){
+		if (this.lineData.positions.length > 32){
 			this.lineData.positions.push(e.x, e.y);
 			this.serverTalker.WSsendLineData(this.lineData);
 			var lastTwoPos = {x: this.lineData.positions[this.lineData.positions.length -4], y: this.lineData.positions[this.lineData.positions.length -3]};

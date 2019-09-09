@@ -72,7 +72,7 @@ class MessageHandler:
 
 
 
-lines = LineReceiver(200, 40)
+lines = LineReceiver(80, 40)
 counter = ConnectCounter()
 messageHandler = MessageHandler()
 
